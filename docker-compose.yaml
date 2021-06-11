@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    image: kartoza/postgis
+    environment:
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=test_passwd
+      - POSTGRES_DB=olgram
+    ports:
+      - '5431:5432'
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
