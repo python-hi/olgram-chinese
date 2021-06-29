@@ -8,8 +8,8 @@ async def init_database():
     #  which contain models from "app.models"
     await Tortoise.init(
         db_url=f'postgres://{DatabaseSettings.user()}:{DatabaseSettings.password()}'
-               f'@localhost:5431/{DatabaseSettings.database_name()}',
-        modules={'models': ['olgram.models.bot', 'olgram.models.user']}
+               f'@localhost:5430/{DatabaseSettings.database_name()}',
+        modules={'models': ['olgram.models.models']}
     )
     # Generate the schema
     await Tortoise.generate_schemas()

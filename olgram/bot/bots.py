@@ -5,40 +5,65 @@ import re
 from textwrap import dedent
 
 from ..utils.router import Router
-from olgram.models.bot import Bot
-from olgram.models.user import User
+from .bot import select_bot
+from olgram.models.models import Bot, User
+from olgram.settings import OlgramSettings
 
 router = Router()
 token_pattern = r'[0-9]{8,10}:[a-zA-Z0-9_-]{35}'
 
 
-@router.message_handler(commands=["my_bots"])
+@router.message_handler(commands=["mybots"], state="*")
 async def my_bots(message: types.Message, state: FSMContext):
+    """
+    Команда /mybots (список ботов)
+    """
     user = await User.get_or_none(telegram_id=message.from_user.id)
     bots = await Bot.filter(owner=user)
     if not bots:
         await message.answer(dedent("""
         У вас нет добавленных ботов. 
 
-        Отправьте команду /add_bot, чтобы добавить бот.
+        Отправьте команду /addbot, чтобы добавить бот.
         """))
         return
 
-    bots_str = "\n".join(["@" + bot.name for bot in bots])
-    await message.answer(dedent(f"""
-    Ваши боты:
-    {bots_str}
-    """))
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    for bot in bots:
+        keyboard.insert(types.InlineKeyboardButton(text="@" + bot.name, callback_data=select_bot.new(bot_id=bot.id)))
+
+    await message.answer("Ваши боты", reply_markup=keyboard)
 
 
-@router.message_handler(commands=["add_bot"])
+@router.message_handler(commands=["addbot"], state="*")
 async def add_bot(message: types.Message, state: FSMContext):
-    await message.answer("Окей, пришли тогда токен plz")
+    """
+    Команда /addbot (добавить бота)
+    """
+    bot_count = await Bot.filter(user__telegram_id=message.from_user.id).count()
+    if bot_count > OlgramSettings.max_bots_per_user():
+        await message.answer("У вас уже слишком много ботов")
+        return
+
+    await message.answer(dedent("""
+    Чтобы подключить бот, вам нужно выполнить три действия:
+
+    1. Перейдите в бот @BotFather, нажмите START и отправьте команду /newbot
+    2. Введите название бота, а потом username бота.
+    3. После создания бота перешлите ответное сообщение в этот бот или скопируйте и пришлите token бота.
+    
+    Важно: не подключайте боты, которые используются в других сервисах (Manybot, Chatfuel, Livegram и других).
+    
+    Подробную инструкцию по созданию бота читайте здесь /help)
+    """))
     await state.set_state("add_bot")
 
 
 @router.message_handler(state="add_bot", content_types="text", regexp="^[^/].+")  # Not command
 async def bot_added(message: types.Message, state: FSMContext):
+    """
+    Пользователь добавляет бота и мы ждём от него токен
+    """
     token = re.findall(token_pattern, message.text)
 
     async def on_invalid_token():
@@ -66,6 +91,7 @@ async def bot_added(message: types.Message, state: FSMContext):
     try:
         test_bot = AioBot(token)
         test_bot_info = await test_bot.get_me()
+        await test_bot.session.close()
     except ValueError:
         return await on_invalid_token()
     except Unauthorized:

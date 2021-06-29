@@ -2,3 +2,4 @@ aiogram
 tortoise-orm[asyncpg]
 aerich
 python-dotenv
+aioredis

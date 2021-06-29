@@ -1,4 +1,4 @@
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import types
 from aiogram.dispatcher import FSMContext
 from textwrap import dedent
 from ..utils.router import Router
@@ -9,7 +9,7 @@ router = Router()
 @router.message_handler(commands=["start"], state="*")
 async def start(message: types.Message, state: FSMContext):
     """
-    Start command handler
+    Команда /start
     """
     await state.reset_state()
 
@@ -20,8 +20,8 @@ async def start(message: types.Message, state: FSMContext):
 
     Используйте эти команды, чтобы управлять этим ботом:
 
-    /add_bot - добавить бот
-    /my_bots - управление ботами
+    /addbot - добавить бот
+    /mybots - управление ботами
 
     /help - помощь
 
@@ -32,7 +32,7 @@ async def start(message: types.Message, state: FSMContext):
 @router.message_handler(commands=["help"], state="*")
 async def help(message: types.Message, state: FSMContext):
     """
-    Help command handler
+    Команда /help
     """
     await message.answer(dedent("""
     <todo: help here>

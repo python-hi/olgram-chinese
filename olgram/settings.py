@@ -15,6 +15,16 @@ class _Settings(ABC):
         return parameter
 
 
+class OlgramSettings(_Settings):
+    @classmethod
+    def max_bots_per_user(cls) -> int:
+        """
+        Максимальное количество ботов у одного пользователя
+        :return: int
+        """
+        return 5
+
+
 class BotSettings(_Settings):
     @classmethod
     def token(cls) -> str:

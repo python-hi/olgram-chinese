@@ -10,3 +10,11 @@ class Bot(Model):
 
     class Meta:
         table = 'bot'
+
+
+class User(Model):
+    id = fields.IntField(pk=True)
+    telegram_id = fields.IntField(index=True, unique=True)
+
+    class Meta:
+        table = 'user'

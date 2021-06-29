@@ -6,7 +6,7 @@ from settings import BotSettings
 
 from olgram.bot.bots import router as bots_router
 from olgram.bot.start import router as start_router
-
+from olgram.bot.bot import router as bot_router
 from olgram.utils.database import init_database
 
 
@@ -21,6 +21,7 @@ def main():
 
     start_router.setup(dp)
     bots_router.setup(dp)
+    bot_router.setup(dp)
 
     executor.start_polling(dp, skip_updates=True)
 
