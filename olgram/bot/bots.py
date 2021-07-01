@@ -1,6 +1,7 @@
 from aiogram import types, Bot as AioBot
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.exceptions import Unauthorized, TelegramAPIError
+from tortoise.exceptions import IntegrityError
 import re
 from textwrap import dedent
 
@@ -40,9 +41,9 @@ async def add_bot(message: types.Message, state: FSMContext):
     """
     Команда /addbot (добавить бота)
     """
-    bot_count = await Bot.filter(user__telegram_id=message.from_user.id).count()
-    if bot_count > OlgramSettings.max_bots_per_user():
-        await message.answer("У вас уже слишком много ботов")
+    bot_count = await Bot.filter(owner__telegram_id=message.from_user.id).count()
+    if bot_count >= OlgramSettings.max_bots_per_user():
+        await message.answer("У вас уже слишком много ботов.")
         return
 
     await message.answer(dedent("""
@@ -83,6 +84,11 @@ async def bot_added(message: types.Message, state: FSMContext):
         Не удалось запустить этого бота: непредвиденная ошибка
         """))
 
+    async def on_duplication_bot():
+        await message.answer(dedent("""
+        Такой бот уже есть в базе данных
+        """))
+
     if not token:
         return await on_invalid_token()
 
@@ -100,7 +106,11 @@ async def bot_added(message: types.Message, state: FSMContext):
         return await on_unknown_error()
 
     user, _ = await User.get_or_create(telegram_id=message.from_user.id)
-    bot = Bot(token=token, owner=user, name=test_bot_info.username)
-    await bot.save()
+    bot = Bot(token=token, owner=user, name=test_bot_info.username, super_chat_id=message.from_user.id)
+    try:
+        await bot.save()
+    except IntegrityError:
+        return await on_duplication_bot()
 
     await message.answer("Бот добавлен!")
+    await state.reset_state()

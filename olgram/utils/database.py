@@ -1,5 +1,5 @@
 from tortoise import Tortoise
-from settings import DatabaseSettings
+from olgram.settings import DatabaseSettings
 
 
 async def init_database():
