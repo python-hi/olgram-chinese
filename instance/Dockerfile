@@ -5,6 +5,6 @@ COPY . /app
 WORKDIR /app
 
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt && \
+    pip install -r requirements.txt
 
-CMD ["python", "instance"]
+CMD ["python", "bot.py"]

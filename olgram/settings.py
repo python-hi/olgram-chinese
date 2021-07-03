@@ -1,12 +1,12 @@
-from abc import ABC
 from dotenv import load_dotenv
+from abc import ABC
 import os
 
 
 load_dotenv()
 
 
-class _Settings(ABC):
+class AbstractSettings(ABC):
     @classmethod
     def _get_env(cls, parameter: str) -> str:
         parameter = os.getenv(parameter, None)
@@ -15,7 +15,7 @@ class _Settings(ABC):
         return parameter
 
 
-class OlgramSettings(_Settings):
+class OlgramSettings(AbstractSettings):
     @classmethod
     def max_bots_per_user(cls) -> int:
         """
@@ -25,13 +25,17 @@ class OlgramSettings(_Settings):
         return 5
 
 
-class BotSettings(_Settings):
+class BotSettings(AbstractSettings):
     @classmethod
     def token(cls) -> str:
+        """
+        Токен olgram бота
+        :return:
+        """
         return cls._get_env("BOT_TOKEN")
 
 
-class DatabaseSettings(_Settings):
+class DatabaseSettings(AbstractSettings):
     @classmethod
     def user(cls) -> str:
         return cls._get_env("POSTGRES_USER")

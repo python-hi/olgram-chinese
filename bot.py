@@ -1,7 +1,6 @@
 import asyncio
 
 import aiogram.types
-import tortoise.transactions
 from aiogram import Bot as AioBot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
@@ -27,6 +26,14 @@ async def invite_callback(identify: int, message: aiogram.types.Message):
         await bot.group_chats.add(chat)
 
 
+async def left_callback(identify: int, message: aiogram.types.Message):
+    bot = await Bot.get(id=identify)
+
+    chat = await bot.group_chats.get_or_none(chat_id=message.chat.id)
+    if chat:
+        await bot.group_chats.remove(chat)
+
+
 def run_bot(bot: BotInstance, loop: ty.Optional[asyncio.AbstractEventLoop] = None):
     loop = loop or asyncio.get_event_loop()
     loop.create_task(bot.start_polling())
@@ -39,6 +46,7 @@ async def run_all_bots(loop: asyncio.AbstractEventLoop):
                             bot.super_chat_id,
                             bot.start_text,
                             invite_callback=invite_callback,
+                            left_callback=left_callback,
                             identify=bot.id), loop)
 
 

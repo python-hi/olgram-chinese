@@ -1,0 +1,23 @@
+version: '3'
+services:
+  redis:
+    restart: unless-stopped
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redis-db:/bitnami/redis/data
+    env_file:
+      - .env
+  instance:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    environment:
+      - INSTANCE_REDIS_PATH=redis://redis
+
+volumes:
+  redis-db:
