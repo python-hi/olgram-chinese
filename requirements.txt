@@ -1,5 +1,6 @@
 aiogram
 tortoise-orm[asyncpg]
-aerich
+aerich==0.5.4
 python-dotenv
 aioredis
+aiocache

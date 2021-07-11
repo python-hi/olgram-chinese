@@ -1,3 +1,7 @@
+"""
+Здесь простые команды на первом уровне вложенности: /start /help
+"""
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from textwrap import dedent

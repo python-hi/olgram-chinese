@@ -1,3 +1,6 @@
+"""
+Здесь работа с ботами на первом уровне вложенности: список ботов, добавление ботов
+"""
 from aiogram import types, Bot as AioBot
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.exceptions import Unauthorized, TelegramAPIError

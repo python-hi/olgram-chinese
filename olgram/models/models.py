@@ -11,11 +11,19 @@ class Bot(Model):
     name = fields.CharField(max_length=33)
     start_text = fields.TextField(default=dedent("""
     Здравствуйте!
-    Напишите ваш вопрос и мы ответим Вам в ближайшее время.
+    Напишите ваш вопрос и мы ответим вам в ближайшее время.
     """))
 
-    super_chat_id = fields.IntField()
     group_chats = fields.ManyToManyField("models.GroupChat", related_name="bots", on_delete=fields.relational.SET_NULL)
+    group_chat = fields.ForeignKeyField("models.GroupChat", related_name="active_bots",
+                                        on_delete=fields.relational.SET_NULL,
+                                        null=True)
+
+    async def super_chat_id(self):
+        group_chat = await self.group_chat
+        if group_chat:
+            return group_chat.chat_id
+        return (await self.owner).telegram_id
 
     class Meta:
         table = 'bot'

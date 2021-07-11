@@ -47,3 +47,19 @@ class DatabaseSettings(AbstractSettings):
     @classmethod
     def database_name(cls) -> str:
         return cls._get_env("POSTGRES_DB")
+
+    @classmethod
+    def host(cls) -> str:
+        return cls._get_env("POSTGRES_HOST")
+
+
+TORTOISE_ORM = {
+    "connections": {"default": f'postgres://{DatabaseSettings.user()}:{DatabaseSettings.password()}'
+                               f'@{DatabaseSettings.host()}/{DatabaseSettings.database_name()}'},
+    "apps": {
+        "models": {
+            "models": ["olgram.models.models", "aerich.models"],
+            "default_connection": "default",
+        },
+    },
+}
