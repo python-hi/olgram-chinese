@@ -7,6 +7,7 @@ from olgram.settings import TORTOISE_ORM
 import olgram.commands.bot
 import olgram.commands.bots
 import olgram.commands.start
+import olgram.commands.menu
 
 
 async def init_database():

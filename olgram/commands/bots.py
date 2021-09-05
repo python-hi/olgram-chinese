@@ -8,9 +8,9 @@ from tortoise.exceptions import IntegrityError
 import re
 from textwrap import dedent
 
-from .bot import select_bot
 from olgram.models.models import Bot, User
 from olgram.settings import OlgramSettings
+from olgram.commands.menu import send_bots_menu
 
 from olgram.router import dp
 
@@ -22,21 +22,7 @@ async def my_bots(message: types.Message, state: FSMContext):
     """
     Команда /mybots (список ботов)
     """
-    user = await User.get_or_none(telegram_id=message.from_user.id)
-    bots = await Bot.filter(owner=user)
-    if not bots:
-        await message.answer(dedent("""
-        У вас нет добавленных ботов. 
-
-        Отправьте команду /addbot, чтобы добавить бот.
-        """))
-        return
-
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
-    for bot in bots:
-        keyboard.insert(types.InlineKeyboardButton(text="@" + bot.name, callback_data=select_bot.new(bot_id=bot.id)))
-
-    await message.answer("Ваши боты", reply_markup=keyboard)
+    return await send_bots_menu(message.chat.id, message.from_user.id)
 
 
 @dp.message_handler(commands=["addbot"], state="*")
