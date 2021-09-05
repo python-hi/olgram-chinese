@@ -1,5 +1,7 @@
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup
 from aiogram.utils.exceptions import TelegramAPIError
+
+from typing import Optional
 
 
 async def try_delete_message(message: Message):
@@ -7,3 +9,14 @@ async def try_delete_message(message: Message):
         await message.delete()
     except TelegramAPIError:
         pass
+
+
+async def edit_or_create(call: CallbackQuery, message: str,
+                         reply_markup: Optional[InlineKeyboardMarkup] = None,
+                         parse_mode: Optional[str] = None):
+    try:
+        await call.message.edit_text(message, parse_mode=parse_mode)
+        await call.message.edit_reply_markup(reply_markup)
+    except TelegramAPIError:  # кнопка устарела
+        await call.bot.send_message(call.message.chat.id, text=message, reply_markup=reply_markup,
+                                    parse_mode=parse_mode)

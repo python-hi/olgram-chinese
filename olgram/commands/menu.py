@@ -5,6 +5,7 @@ from olgram.models.models import Bot, User
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.callback_data import CallbackData
 from textwrap import dedent
+from olgram.utils.mix import edit_or_create
 
 
 menu_callback = CallbackData('menu', 'level', 'bot_id', 'operation', 'chat')
@@ -12,7 +13,7 @@ menu_callback = CallbackData('menu', 'level', 'bot_id', 'operation', 'chat')
 empty = "0"
 
 
-async def send_bots_menu(chat_id: int, user_id: int):
+async def send_bots_menu(chat_id: int, user_id: int, call=None):
     """
     Отправить пользователю список ботов
     :return:
@@ -35,7 +36,11 @@ async def send_bots_menu(chat_id: int, user_id: int):
                                                                        chat=empty))
         )
 
-    await AioBot.get_current().send_message(chat_id, "Ваши боты", reply_markup=keyboard)
+    text = "Ваши боты"
+    if call:
+        await edit_or_create(call, text, keyboard)
+    else:
+        await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard)
 
 
 async def send_chats_menu(bot: Bot, call: types.CallbackQuery):
@@ -72,7 +77,7 @@ async def send_chats_menu(bot: Bot, call: types.CallbackQuery):
         Выберите чат, куда бот будет пересылать сообщения. 
         """)
 
-    await AioBot.get_current().send_message(call.message.chat.id, text, reply_markup=keyboard)
+    await edit_or_create(call, text, keyboard)
 
 
 async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
@@ -94,7 +99,7 @@ async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
                                    callback_data=menu_callback.new(level=0, bot_id=empty, operation=empty, chat=empty))
     )
 
-    await AioBot.get_current().send_message(call.message.chat.id, dedent(f"""
+    await edit_or_create(call, dedent(f"""
     Управление ботом @{bot.name}.
 
     Если у вас возникли вопросы по настройке бота, то посмотрите нашу справку /help.
@@ -113,7 +118,7 @@ async def send_bot_delete_menu(bot: Bot, call: types.CallbackQuery):
                                    callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
     )
 
-    await AioBot.get_current().send_message(call.message.chat.id, dedent(f"""
+    await edit_or_create(call, dedent(f"""
     Вы уверены, что хотите удалить бота @{bot.name}?
     """), reply_markup=keyboard)
 
@@ -141,7 +146,7 @@ async def send_bot_text_menu(bot: Bot, call: types.CallbackQuery):
     Отправьте сообщение, чтобы изменить текст.
     """)
     text = text.format(bot.start_text)
-    await AioBot.get_current().send_message(call.message.chat.id, text, reply_markup=keyboard, parse_mode="markdown")
+    await edit_or_create(call, text, keyboard, parse_mode="markdown")
 
 
 @dp.callback_query_handler(menu_callback.filter(), state="*")
@@ -151,7 +156,7 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
     level = callback_data.get("level")
 
     if level == "0":
-        return await send_bots_menu(call.message.chat.id, call.from_user.id)
+        return await send_bots_menu(call.message.chat.id, call.from_user.id, call)
 
     bot_id = callback_data.get("bot_id")
     bot = await Bot.get_or_none(id=bot_id)
