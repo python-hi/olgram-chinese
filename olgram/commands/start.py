@@ -5,12 +5,11 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from textwrap import dedent
-from ..utils.router import Router
 
-router = Router()
+from olgram.router import dp
 
 
-@router.message_handler(commands=["start"], state="*")
+@dp.message_handler(commands=["start"], state="*")
 async def start(message: types.Message, state: FSMContext):
     """
     Команда /start
@@ -33,7 +32,7 @@ async def start(message: types.Message, state: FSMContext):
     """))
 
 
-@router.message_handler(commands=["help"], state="*")
+@dp.message_handler(commands=["help"], state="*")
 async def help(message: types.Message, state: FSMContext):
     """
     Команда /help

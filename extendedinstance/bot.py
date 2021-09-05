@@ -21,18 +21,6 @@ class BotInstanceDatabase(BotInstance):
             # Polling только для отладки
             asyncio.get_event_loop().create_task(cls._instances[bot.id].start_polling())
 
-    @classmethod
-    async def on_delete(cls, instance: Bot):
-        # Polling только для отладки
-        cls._instances[instance.id].stop_polling()
-        cls._instances.pop(instance.id)
-
-    @classmethod
-    async def on_create(cls, instance: Bot):
-        # Polling только для отладки
-        cls._instances[instance.id] = BotInstanceDatabase(instance)
-        asyncio.get_event_loop().create_task(cls._instances[instance.id].start_polling())
-
     @aiocache.cached(ttl=5)
     async def _properties(self) -> BotProperties:
         await self._bot.refresh_from_db()

@@ -6,11 +6,10 @@ from aiogram.dispatcher import FSMContext
 from aiogram.utils.callback_data import CallbackData
 from textwrap import dedent
 
-from olgram.utils.router import Router
 from olgram.utils.mix import try_delete_message
 from olgram.models.models import Bot, User
 
-router = Router()
+from olgram.router import dp
 
 # Пользователь выбрал бота
 select_bot = CallbackData('bot_select', 'bot_id')
@@ -37,7 +36,7 @@ def check_bot_owner(handler):
     return wrapped
 
 
-@router.callback_query_handler(select_bot.filter(), state="*")
+@dp.callback_query_handler(select_bot.filter(), state="*")
 @check_bot_owner
 async def select_bot_callback(bot: Bot, call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     """
@@ -62,7 +61,7 @@ async def select_bot_callback(bot: Bot, call: types.CallbackQuery, callback_data
     """), reply_markup=keyboard)
 
 
-@router.callback_query_handler(bot_operation.filter(operation="delete"), state="*")
+@dp.callback_query_handler(bot_operation.filter(operation="delete"), state="*")
 @check_bot_owner
 async def delete_bot_callback(bot: Bot, call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     """
@@ -73,7 +72,7 @@ async def delete_bot_callback(bot: Bot, call: types.CallbackQuery, callback_data
     await try_delete_message(call.message)
 
 
-@router.callback_query_handler(bot_operation.filter(operation="chat"), state="*")
+@dp.callback_query_handler(bot_operation.filter(operation="chat"), state="*")
 @check_bot_owner
 async def chats_bot_callback(bot: Bot, call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     """
@@ -102,7 +101,7 @@ async def chats_bot_callback(bot: Bot, call: types.CallbackQuery, callback_data:
     """), reply_markup=keyboard)
 
 
-@router.callback_query_handler(select_bot_chat.filter(), state="*")
+@dp.callback_query_handler(select_bot_chat.filter(), state="*")
 @check_bot_owner
 async def chat_selected_callback(bot: Bot, call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     """
@@ -118,7 +117,7 @@ async def chat_selected_callback(bot: Bot, call: types.CallbackQuery, callback_d
     await call.answer(f"Выбран чат {chat.name}")
 
 
-@router.callback_query_handler(select_bot_chat_personal.filter(), state="*")
+@dp.callback_query_handler(select_bot_chat_personal.filter(), state="*")
 @check_bot_owner
 async def chat_selected_personal_callback(bot: Bot, call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     """
@@ -129,7 +128,7 @@ async def chat_selected_personal_callback(bot: Bot, call: types.CallbackQuery, c
     await call.answer(f"Выбран личный чат")
 
 
-@router.callback_query_handler(bot_operation.filter(operation="text"), state="*")
+@dp.callback_query_handler(bot_operation.filter(operation="text"), state="*")
 @check_bot_owner
 async def text_bot_callback(bot: Bot, call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     """

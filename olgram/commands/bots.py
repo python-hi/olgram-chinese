@@ -8,16 +8,16 @@ from tortoise.exceptions import IntegrityError
 import re
 from textwrap import dedent
 
-from ..utils.router import Router
 from .bot import select_bot
 from olgram.models.models import Bot, User
 from olgram.settings import OlgramSettings
 
-router = Router()
+from olgram.router import dp
+
 token_pattern = r'[0-9]{8,10}:[a-zA-Z0-9_-]{35}'
 
 
-@router.message_handler(commands=["mybots"], state="*")
+@dp.message_handler(commands=["mybots"], state="*")
 async def my_bots(message: types.Message, state: FSMContext):
     """
     Команда /mybots (список ботов)
@@ -39,7 +39,7 @@ async def my_bots(message: types.Message, state: FSMContext):
     await message.answer("Ваши боты", reply_markup=keyboard)
 
 
-@router.message_handler(commands=["addbot"], state="*")
+@dp.message_handler(commands=["addbot"], state="*")
 async def add_bot(message: types.Message, state: FSMContext):
     """
     Команда /addbot (добавить бота)
@@ -63,7 +63,7 @@ async def add_bot(message: types.Message, state: FSMContext):
     await state.set_state("add_bot")
 
 
-@router.message_handler(state="add_bot", content_types="text", regexp="^[^/].+")  # Not command
+@dp.message_handler(state="add_bot", content_types="text", regexp="^[^/].+")  # Not command
 async def bot_added(message: types.Message, state: FSMContext):
     """
     Пользователь добавляет бота и мы ждём от него токен

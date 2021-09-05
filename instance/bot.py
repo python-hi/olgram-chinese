@@ -30,6 +30,7 @@ class BotInstance(ABC):
         raise NotImplemented()
 
     def stop_polling(self):
+        print("stop polling")
         self._dp.stop_polling()
 
     async def _setup(self):
@@ -52,6 +53,7 @@ class BotInstance(ABC):
                                                                                 types.ContentType.VOICE])
 
     async def start_polling(self):
+        print("start polling")
         await self._setup()
         await self._dp.start_polling()
 
