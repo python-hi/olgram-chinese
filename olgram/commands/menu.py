@@ -6,6 +6,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.utils.callback_data import CallbackData
 from textwrap import dedent
 from olgram.utils.mix import edit_or_create
+from olgram.commands import bot_actions
 
 
 menu_callback = CallbackData('menu', 'level', 'bot_id', 'operation', 'chat')
@@ -18,6 +19,9 @@ async def send_bots_menu(chat_id: int, user_id: int, call=None):
     Отправить пользователю список ботов
     :return:
     """
+    if call:
+        await call.answer()
+
     user = await User.get_or_none(telegram_id=user_id)
     bots = await Bot.filter(owner=user)
     if not bots:
@@ -44,6 +48,7 @@ async def send_bots_menu(chat_id: int, user_id: int, call=None):
 
 
 async def send_chats_menu(bot: Bot, call: types.CallbackQuery):
+    await call.answer()
     keyboard = types.InlineKeyboardMarkup(row_width=2)
 
     chats = await bot.group_chats.all()
@@ -81,6 +86,7 @@ async def send_chats_menu(bot: Bot, call: types.CallbackQuery):
 
 
 async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
+    await call.answer()
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.insert(
         types.InlineKeyboardButton(text="Текст",
@@ -107,6 +113,7 @@ async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
 
 
 async def send_bot_delete_menu(bot: Bot, call: types.CallbackQuery):
+    await call.answer()
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.insert(
         types.InlineKeyboardButton(text="Да, удалить бот",
@@ -124,6 +131,7 @@ async def send_bot_delete_menu(bot: Bot, call: types.CallbackQuery):
 
 
 async def send_bot_text_menu(bot: Bot, call: types.CallbackQuery):
+    await call.answer()
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.insert(
         types.InlineKeyboardButton(text="Сбросить текст",
@@ -151,8 +159,6 @@ async def send_bot_text_menu(bot: Bot, call: types.CallbackQuery):
 
 @dp.callback_query_handler(menu_callback.filter(), state="*")
 async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
-    await call.answer()
-
     level = callback_data.get("level")
 
     if level == "0":
@@ -174,4 +180,15 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
         if operation == "delete":
             return await send_bot_delete_menu(bot, call)
         if operation == "text":
+            await state.set_state("wait_start_text")
+            await state.set_data({"bot_id": bot.id})
+            return await send_bot_text_menu(bot, call)
+
+    if level == "3":
+        if operation == "delete_yes":
+            return await bot_actions.delete_bot(bot, call)
+        if operation == "chat":
+            return await bot_actions.select_chat(bot, call, callback_data.get("chat"))
+        if operation == "reset_text":
+            await bot_actions.reset_bot_text(bot, call)
             return await send_bot_text_menu(bot, call)

@@ -101,5 +101,5 @@ async def bot_added(message: types.Message, state: FSMContext):
     except IntegrityError:
         return await on_duplication_bot()
 
-    await message.answer("Бот добавлен!")
+    await message.answer("Бот добавлен! Список ваших ботов: /mybots")
     await state.reset_state()
