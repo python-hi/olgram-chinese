@@ -8,6 +8,8 @@ from textwrap import dedent
 from olgram.utils.mix import edit_or_create
 from olgram.commands import bot_actions
 
+import typing as ty
+
 
 menu_callback = CallbackData('menu', 'level', 'bot_id', 'operation', 'chat')
 
@@ -130,8 +132,9 @@ async def send_bot_delete_menu(bot: Bot, call: types.CallbackQuery):
     """), reply_markup=keyboard)
 
 
-async def send_bot_text_menu(bot: Bot, call: types.CallbackQuery):
-    await call.answer()
+async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = None, chat_id: ty.Optional[int] = None):
+    if call:
+        await call.answer()
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.insert(
         types.InlineKeyboardButton(text="Сбросить текст",
@@ -139,7 +142,7 @@ async def send_bot_text_menu(bot: Bot, call: types.CallbackQuery):
                                                                    chat=empty))
     )
     keyboard.insert(
-        types.InlineKeyboardButton(text="<< Назад",
+        types.InlineKeyboardButton(text="<< Завершить редактирование",
                                    callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
     )
 
@@ -154,7 +157,20 @@ async def send_bot_text_menu(bot: Bot, call: types.CallbackQuery):
     Отправьте сообщение, чтобы изменить текст.
     """)
     text = text.format(bot.start_text)
-    await edit_or_create(call, text, keyboard, parse_mode="markdown")
+    if call:
+        await edit_or_create(call, text, keyboard, parse_mode="markdown")
+    else:
+        await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard, parse_mode="markdown")
+
+
+@dp.message_handler(state="wait_start_text", content_types="text", regexp="^[^/].+")  # Not command
+async def start_text_received(message: types.Message, state: FSMContext):
+    async with state.proxy() as proxy:
+        bot_id = proxy.get("bot_id")
+    bot = await Bot.get_or_none(pk=bot_id)
+    bot.start_text = message.text
+    await bot.save()
+    await send_bot_text_menu(bot, chat_id=message.chat.id)
 
 
 @dp.callback_query_handler(menu_callback.filter(), state="*")
@@ -175,13 +191,15 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
 
     operation = callback_data.get("operation")
     if level == "2":
+        await state.reset_state()
         if operation == "chat":
             return await send_chats_menu(bot, call)
         if operation == "delete":
             return await send_bot_delete_menu(bot, call)
         if operation == "text":
             await state.set_state("wait_start_text")
-            await state.set_data({"bot_id": bot.id})
+            async with state.proxy() as proxy:
+                proxy["bot_id"] = bot.id
             return await send_bot_text_menu(bot, call)
 
     if level == "3":

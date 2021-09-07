@@ -1,27 +1,9 @@
 """
 Здесь работа с конкретным ботом
 """
-from aiogram import types, Bot as AioBot
+from aiogram import types
 from aiogram.utils.exceptions import TelegramAPIError
-from aiogram.dispatcher import FSMContext
-from aiogram.utils.callback_data import CallbackData
-from textwrap import dedent
-
-from olgram.utils.mix import try_delete_message
-from olgram.models.models import Bot, User
-
-from olgram.router import dp
-
-
-@dp.message_handler(state="wait_start_text", content_types="text", regexp="^[^/].+")  # Not command
-async def start_text_received(message: types.Message, state: FSMContext):
-    await state.reset_state()
-    data = await state.get_data()
-    print(data)
-    bot = await Bot.get_or_none(pk=data.get("bot_id"))
-    bot.start_text = message.text
-    await bot.save()
-    await message.answer("Новый текст приветствия\n\n: " + message.text)
+from olgram.models.models import Bot
 
 
 async def delete_bot(bot: Bot, call: types.CallbackQuery):
