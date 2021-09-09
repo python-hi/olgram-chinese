@@ -29,6 +29,16 @@ class OlgramSettings(AbstractSettings):
         return "0.0.0"
 
 
+class ServerSettings(AbstractSettings):
+    @classmethod
+    def hook_host(cls) -> str:
+        return cls._get_env("WEBHOOK_HOST")
+
+    @classmethod
+    def hook_port(cls) -> int:
+        return int(cls._get_env("WEBHOOK_PORT"))
+
+
 class BotSettings(AbstractSettings):
     @classmethod
     def token(cls) -> str:

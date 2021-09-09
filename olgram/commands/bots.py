@@ -11,6 +11,7 @@ from textwrap import dedent
 from olgram.models.models import Bot, User
 from olgram.settings import OlgramSettings
 from olgram.commands.menu import send_bots_menu
+from server.server import register_token
 
 from olgram.router import dp
 
@@ -92,6 +93,9 @@ async def bot_added(message: types.Message, state: FSMContext):
     except Unauthorized:
         return await on_dummy_token()
     except TelegramAPIError:
+        return await on_unknown_error()
+
+    if not register_token(token):
         return await on_unknown_error()
 
     user, _ = await User.get_or_create(telegram_id=message.from_user.id)

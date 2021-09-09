@@ -4,12 +4,14 @@
 from aiogram import types
 from aiogram.utils.exceptions import TelegramAPIError
 from olgram.models.models import Bot
+from server.server import unregister_token
 
 
 async def delete_bot(bot: Bot, call: types.CallbackQuery):
     """
     Пользователь решил удалить бота
     """
+    await unregister_token(bot.token)
     await bot.delete()
     await call.answer("Бот удалён")
     try:
