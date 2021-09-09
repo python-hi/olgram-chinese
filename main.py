@@ -23,7 +23,7 @@ def main():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(init_database())
 
-    loop.create_task(dp.start_polling())
+    # loop.create_task(dp.start_polling())
     loop.create_task(server_main().start())
 
     loop.run_forever()
