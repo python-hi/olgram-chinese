@@ -52,7 +52,7 @@ class CustomRequestHandler(WebhookRequestHandler):
         self._dispatcher = None
         super(CustomRequestHandler, self).__init__(*args, **kwargs)
 
-    def _create_dispatcher(self):
+    async def _create_dispatcher(self):
         key = self.request.url.path[1:]
 
         bot = await Bot.filter(code=key).first()
@@ -65,10 +65,10 @@ class CustomRequestHandler(WebhookRequestHandler):
 
         return dp
 
-    def post(self):
+    async def post(self):
         # TODO: refactor
-        self._dispatcher = self._create_dispatcher()
-        super(CustomRequestHandler, self).post()
+        self._dispatcher = await self._create_dispatcher()
+        await super(CustomRequestHandler, self).post()
         self._dispatcher = None
 
     def get_dispatcher(self):
