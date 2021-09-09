@@ -107,7 +107,7 @@ async def bot_added(message: types.Message, state: FSMContext):
     except IntegrityError:
         return await on_duplication_bot()
 
-    if not register_token(bot):
+    if not await register_token(bot):
         await bot.delete()
         return await on_unknown_error()
 
