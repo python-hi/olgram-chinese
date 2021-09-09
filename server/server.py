@@ -1,26 +1,31 @@
-from aiogram import Bot
-import hashlib
+from aiogram import Bot as AioBot, Dispatcher
+from aiogram.dispatcher.webhook import SendMessage, WebhookRequestHandler
+from olgram.models.models import Bot
+from aiohttp import web
+import asyncio
+import aiohttp
+
 
 from olgram.settings import ServerSettings
 
 
-def path_for_bot(token: str) -> str:
-    return "/" + hashlib.md5(token.encode("UTF-8")).hexdigest()
+def path_for_bot(bot: Bot) -> str:
+    return "/" + bot.code
 
 
-def url_for_bot(token: str) -> str:
-    return f"https://{ServerSettings.hook_host()}:{ServerSettings.hook_port()}" + path_for_bot(token)
+def url_for_bot(bot: Bot) -> str:
+    return f"https://{ServerSettings.hook_host()}:{ServerSettings.hook_port()}" + path_for_bot(bot)
 
 
-async def register_token(token: str) -> bool:
+async def register_token(bot: Bot) -> bool:
     """
     Зарегистрировать токен
-    :param token: токен
+    :param bot: Бот
     :return: получилось ли
     """
-    bot = Bot(token)
-    res = await bot.set_webhook(url_for_bot(token))
-    await bot.session.close()
+    a_bot = AioBot(bot.token)
+    res = await a_bot.set_webhook(url_for_bot(bot))
+    await a_bot.session.close()
     return res
 
 
@@ -30,5 +35,42 @@ async def unregister_token(token: str):
     :param token: токен
     :return:
     """
-    bot = Bot(token)
+    bot = AioBot(token)
     await bot.delete_webhook()
+
+
+async def cmd_start(message, *args, **kwargs):
+    return SendMessage(chat_id=message.chat.id, text=f'Hi from webhook, bot {message.via_bot}',
+                       reply_to_message_id=message.message_id)
+
+
+class CustomRequestHandler(WebhookRequestHandler):
+    def get_dispatcher(self):
+        """
+        Get Dispatcher instance from environment
+
+        :return: :class:`aiogram.Dispatcher`
+        """
+        key = self.request.url.path[1:]
+
+        bot = await Bot.filter(code=key).first()
+        if not bot:
+            return None
+
+        dp = Dispatcher(AioBot(bot.token))
+
+        dp.register_message_handler(cmd_start, commands=['start'])
+
+        return dp
+
+
+def main():
+    loop = asyncio.get_event_loop()
+
+    app = web.Application()
+    app.router.add_route('*', r"/{name}", CustomRequestHandler, name='webhook_handler')
+
+    runner = aiohttp.web.AppRunner(app)
+    loop.run_until_complete(runner.setup())
+    site = aiohttp.web.TCPSite(runner, host=ServerSettings.app_host(), port=ServerSettings.app_port())
+    return site

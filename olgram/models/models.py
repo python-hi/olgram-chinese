@@ -1,6 +1,6 @@
 from tortoise.models import Model
 from tortoise import fields
-
+from uuid import uuid4
 from textwrap import dedent
 
 
@@ -9,6 +9,7 @@ class Bot(Model):
     token = fields.CharField(max_length=50, unique=True)
     owner = fields.ForeignKeyField("models.User", related_name="bots")
     name = fields.CharField(max_length=33)
+    code = fields.UUIDField(default=uuid4, index=True)
     start_text = fields.TextField(default=dedent("""
     Здравствуйте!
     Напишите ваш вопрос и мы ответим вам в ближайшее время.
