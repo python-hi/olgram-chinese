@@ -16,14 +16,23 @@ services:
       - redis-db:/bitnami/redis/data
     env_file:
       - release.env
-  bot:
-    build: .
+  olgram:
+    image: ghcr.io/civsocit/olgram/bot:stable
     restart: unless-stopped
+    labels:
+      - 'com.centurylinklabs.watchtower.enable="true"'
     env_file:
       - release.env
     depends_on:
       - postgres
       - redis
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config.json:/config.json
+    command: --interval 30
+
 
 volumes:
   database:

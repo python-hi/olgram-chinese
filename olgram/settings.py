@@ -24,6 +24,10 @@ class OlgramSettings(AbstractSettings):
         """
         return 5
 
+    @classmethod
+    def version(cls):
+        return "0.0.0"
+
 
 class BotSettings(AbstractSettings):
     @classmethod

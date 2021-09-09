@@ -5,6 +5,7 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from textwrap import dedent
+from olgram.settings import OlgramSettings
 
 from olgram.router import dp
 
@@ -37,6 +38,8 @@ async def help(message: types.Message, state: FSMContext):
     """
     Команда /help
     """
-    await message.answer(dedent("""
+    await message.answer(dedent(f"""
     <todo: help here>
+    
+    Version {OlgramSettings.version()}
     """))
