@@ -56,7 +56,7 @@ class CustomRequestHandler(WebhookRequestHandler):
         key = self.request.url.path[1:]
 
         # TODO: async
-        bot = asyncio.get_event_loop().run_until_complete(Bot.filter(code=key).first())
+        bot = asyncio.new_event_loop().run_until_complete(Bot.filter(code=key).first())
         if not bot:
             return None
 
