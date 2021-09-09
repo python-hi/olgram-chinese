@@ -40,6 +40,6 @@ async def help(message: types.Message, state: FSMContext):
     """
     await message.answer(dedent(f"""
     <todo: help here>
-    
+
     Version {OlgramSettings.version()}
     """))
