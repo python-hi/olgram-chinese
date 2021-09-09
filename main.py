@@ -4,10 +4,10 @@ from tortoise import Tortoise
 from olgram.router import dp
 from olgram.settings import TORTOISE_ORM
 
-import olgram.commands.bots
-import olgram.commands.start
-import olgram.commands.menu
-import olgram.commands.bot_actions
+import olgram.commands.bots  # noqa: F401
+import olgram.commands.start  # noqa: F401
+import olgram.commands.menu  # noqa: F401
+import olgram.commands.bot_actions  # noqa: F401
 
 
 async def init_database():

@@ -27,7 +27,7 @@ class BotInstance(ABC):
 
     @abstractmethod
     async def _properties(self) -> BotProperties:
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def stop_polling(self):
         print("stop polling")
@@ -112,8 +112,8 @@ class FreezeBotInstance(BotInstance):
 if __name__ == '__main__':
     """
     Режим single-instance. В этом режиме не работает olgram. На сервере запускается только один feedback (instance)
-    бот для пересылки сообщений. Все настройки этого бота задаются в переменных окружения на сервере. Бот работает 
-    в режиме polling
+    бот для пересылки сообщений. Все настройки этого бота задаются в переменных окружения на сервере. Бот работает
+     в режиме polling
     """
     bot = FreezeBotInstance(
         InstanceSettings.token(),

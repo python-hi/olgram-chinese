@@ -28,7 +28,7 @@ async def send_bots_menu(chat_id: int, user_id: int, call=None):
     bots = await Bot.filter(owner=user)
     if not bots:
         await AioBot.get_current().send_message(chat_id, dedent("""
-        У вас нет добавленных ботов. 
+        У вас нет добавленных ботов.
 
         Отправьте команду /addbot, чтобы добавить бот.
         """))
@@ -80,8 +80,8 @@ async def send_chats_menu(bot: Bot, call: types.CallbackQuery):
         """)
     else:
         text = dedent(f"""
-        В этом разделе вы можете привязать бота @{bot.name} к чату. 
-        Выберите чат, куда бот будет пересылать сообщения. 
+        В этом разделе вы можете привязать бота @{bot.name} к чату.
+        Выберите чат, куда бот будет пересылать сообщения.
         """)
 
     await edit_or_create(call, text, keyboard)
@@ -92,15 +92,18 @@ async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.insert(
         types.InlineKeyboardButton(text="Текст",
-                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="text", chat=empty))
+                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="text",
+                                                                   chat=empty))
     )
     keyboard.insert(
         types.InlineKeyboardButton(text="Чат",
-                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="chat", chat=empty))
+                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="chat",
+                                                                   chat=empty))
     )
     keyboard.insert(
         types.InlineKeyboardButton(text="Удалить бот",
-                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="delete", chat=empty))
+                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="delete",
+                                                                   chat=empty))
     )
     keyboard.insert(
         types.InlineKeyboardButton(text="<< Назад",

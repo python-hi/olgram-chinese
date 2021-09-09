@@ -41,9 +41,9 @@ async def add_bot(message: types.Message, state: FSMContext):
     1. Перейдите в бот @BotFather, нажмите START и отправьте команду /newbot
     2. Введите название бота, а потом username бота.
     3. После создания бота перешлите ответное сообщение в этот бот или скопируйте и пришлите token бота.
-    
+
     Важно: не подключайте боты, которые используются в других сервисах (Manybot, Chatfuel, Livegram и других).
-    
+
     Подробную инструкцию по созданию бота читайте здесь /help)
     """))
     await state.set_state("add_bot")
@@ -58,7 +58,7 @@ async def bot_added(message: types.Message, state: FSMContext):
 
     async def on_invalid_token():
         await message.answer(dedent("""
-        Это не токен бота. 
+        Это не токен бота.
 
         Токен выглядит вот так: 123456789:AAAA-abc123_AbcdEFghijKLMnopqrstu12
         """))
