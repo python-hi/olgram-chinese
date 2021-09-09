@@ -28,7 +28,7 @@ async def register_token(bot: Bot) -> bool:
     logger.info(f"register token {bot.name}")
     a_bot = AioBot(bot.token)
     res = await a_bot.set_webhook(url_for_bot(bot))
-    await a_bot.session.close()
+    del a_bot
     return res
 
 
@@ -40,8 +40,8 @@ async def unregister_token(token: str):
     """
     logger.info(f"unregister token {token}")
     bot = AioBot(token)
-    await bot.session.close()
     await bot.delete_webhook()
+    del bot
 
 
 async def cmd_start(message, *args, **kwargs):
