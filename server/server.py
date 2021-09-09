@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def path_for_bot(bot: Bot) -> str:
-    return "/" + bot.code
+    return "/" + str(bot.code)
 
 
 def url_for_bot(bot: Bot) -> str:
