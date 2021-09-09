@@ -47,16 +47,15 @@ async def cmd_start(message, *args, **kwargs):
 
 
 class CustomRequestHandler(WebhookRequestHandler):
-    def get_dispatcher(self):
-        """
-        Get Dispatcher instance from environment
 
-        :return: :class:`aiogram.Dispatcher`
-        """
+    def __init__(self, *args, **kwargs):
+        self._dispatcher = None
+        super(CustomRequestHandler, self).__init__(*args, **kwargs)
+
+    def _create_dispatcher(self):
         key = self.request.url.path[1:]
 
-        # TODO: async
-        bot = asyncio.new_event_loop().run_until_complete(Bot.filter(code=key).first())
+        bot = await Bot.filter(code=key).first()
         if not bot:
             return None
 
@@ -65,6 +64,20 @@ class CustomRequestHandler(WebhookRequestHandler):
         dp.register_message_handler(cmd_start, commands=['start'])
 
         return dp
+
+    def post(self):
+        # TODO: refactor
+        self._dispatcher = self._create_dispatcher()
+        super(CustomRequestHandler, self).post()
+        self._dispatcher = None
+
+    def get_dispatcher(self):
+        """
+        Get Dispatcher instance from environment
+
+        :return: :class:`aiogram.Dispatcher`
+        """
+        return self._dispatcher
 
 
 def main():
