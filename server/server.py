@@ -23,6 +23,7 @@ async def register_token(bot: Bot) -> bool:
     :param bot: Бот
     :return: получилось ли
     """
+    await unregister_token(bot.token)
     a_bot = AioBot(bot.token)
     res = await a_bot.set_webhook(url_for_bot(bot))
     await a_bot.session.close()
@@ -36,6 +37,7 @@ async def unregister_token(token: str):
     :return:
     """
     bot = AioBot(token)
+    await bot.session.close()
     await bot.delete_webhook()
 
 
