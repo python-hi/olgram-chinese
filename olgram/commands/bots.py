@@ -15,6 +15,11 @@ from server.server import register_token
 
 from olgram.router import dp
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 token_pattern = r'[0-9]{8,10}:[a-zA-Z0-9_-]{35}'
 
 
@@ -95,15 +100,16 @@ async def bot_added(message: types.Message, state: FSMContext):
     except TelegramAPIError:
         return await on_unknown_error()
 
-    if not register_token(token):
-        return await on_unknown_error()
-
     user, _ = await User.get_or_create(telegram_id=message.from_user.id)
     bot = Bot(token=token, owner=user, name=test_bot_info.username, super_chat_id=message.from_user.id)
     try:
         await bot.save()
     except IntegrityError:
         return await on_duplication_bot()
+
+    if not register_token(bot):
+        await bot.delete()
+        return await on_unknown_error()
 
     await message.answer("Бот добавлен! Список ваших ботов: /mybots")
     await state.reset_state()
