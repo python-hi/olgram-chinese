@@ -14,10 +14,12 @@ CREATE TABLE IF NOT EXISTS "bot" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "token" VARCHAR(50) NOT NULL UNIQUE,
     "name" VARCHAR(33) NOT NULL,
+    "code" UUID NOT NULL,
     "start_text" TEXT NOT NULL,
-    "group_chat_id" INT REFERENCES "group_chat" ("id") ON DELETE SET NULL,
+    "group_chat_id" INT REFERENCES "group_chat" ("id") ON DELETE CASCADE,
     "owner_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE
 );
+CREATE INDEX IF NOT EXISTS "idx_bot_code_a43015" ON "bot" ("code");
 CREATE TABLE IF NOT EXISTS "aerich" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "version" VARCHAR(255) NOT NULL,
@@ -25,6 +27,6 @@ CREATE TABLE IF NOT EXISTS "aerich" (
     "content" JSONB NOT NULL
 );
 CREATE TABLE IF NOT EXISTS "bot_group_chat" (
-    "bot_id" INT NOT NULL REFERENCES "bot" ("id") ON DELETE SET NULL,
-    "groupchat_id" INT NOT NULL REFERENCES "group_chat" ("id") ON DELETE SET NULL
+    "bot_id" INT NOT NULL REFERENCES "bot" ("id") ON DELETE CASCADE,
+    "groupchat_id" INT NOT NULL REFERENCES "group_chat" ("id") ON DELETE CASCADE
 );

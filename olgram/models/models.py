@@ -15,9 +15,10 @@ class Bot(Model):
     Напишите ваш вопрос и мы ответим вам в ближайшее время.
     """))
 
-    group_chats = fields.ManyToManyField("models.GroupChat", related_name="bots", on_delete=fields.relational.SET_NULL)
+    group_chats = fields.ManyToManyField("models.GroupChat", related_name="bots", on_delete=fields.relational.CASCADE,
+                                         null=True)
     group_chat = fields.ForeignKeyField("models.GroupChat", related_name="active_bots",
-                                        on_delete=fields.relational.SET_NULL,
+                                        on_delete=fields.relational.CASCADE,
                                         null=True)
 
     async def super_chat_id(self):
