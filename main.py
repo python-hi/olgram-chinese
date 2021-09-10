@@ -26,8 +26,8 @@ async def init_olgram():
     await bot.set_my_commands(
         [
             BotCommand("start", "Запустить бота"),
-            BotCommand("addbot", "Добавить нового бота"),
-            BotCommand("mybots", "Список ботов"),
+            BotCommand("addbot", "Добавить бот"),
+            BotCommand("mybots", "Управление ботами"),
             BotCommand("help", "Справка")
         ]
     )
