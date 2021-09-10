@@ -5,7 +5,7 @@ from olgram.models.models import Bot
 from aiohttp import web
 from asyncio import get_event_loop
 from olgram.settings import ServerSettings
-from custom import CustomRequestHandler
+from .custom import CustomRequestHandler
 
 import logging
 
