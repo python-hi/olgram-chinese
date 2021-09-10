@@ -1,6 +1,4 @@
-from aiogram import Bot as AioBot, Dispatcher
-from aiogram.dispatcher.webhook import SendMessage, WebhookRequestHandler
-from aiogram import types
+from aiogram import Bot as AioBot
 from olgram.models.models import Bot
 from aiohttp import web
 from asyncio import get_event_loop

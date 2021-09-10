@@ -130,4 +130,3 @@ class CustomRequestHandler(WebhookRequestHandler):
         :return: :class:`aiogram.Dispatcher`
         """
         return Dispatcher.get_current()
-
