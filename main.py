@@ -3,6 +3,7 @@ from tortoise import Tortoise
 
 from olgram.router import dp
 from olgram.settings import TORTOISE_ORM
+from server.custom import init_redis
 
 import olgram.commands.bots  # noqa: F401
 import olgram.commands.start  # noqa: F401
@@ -25,6 +26,7 @@ def main():
     """
     loop = asyncio.get_event_loop()
     loop.run_until_complete(init_database())
+    loop.run_until_complete(init_redis())
 
     loop.create_task(dp.start_polling())
     loop.create_task(server_main().start())

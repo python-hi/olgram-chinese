@@ -46,6 +46,14 @@ class ServerSettings(AbstractSettings):
     def app_port(cls) -> int:
         return 80
 
+    @classmethod
+    def redis_path(cls) -> str:
+        """
+        Путь до БД redis
+        :return:
+        """
+        return cls._get_env("REDIS_PATH")
+
 
 class BotSettings(AbstractSettings):
     @classmethod
