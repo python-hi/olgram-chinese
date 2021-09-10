@@ -1,10 +1,15 @@
 from aiogram import Bot as AioBot, Dispatcher
 from aiogram.dispatcher.webhook import SendMessage, WebhookRequestHandler
+from aiogram import types
 from olgram.models.models import Bot
 from aiohttp import web
 from asyncio import get_event_loop
 from olgram.settings import ServerSettings
+from custom import CustomRequestHandler
+
 import logging
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,47 +46,6 @@ async def unregister_token(token: str):
     await bot.delete_webhook()
     await bot.session.close()
     del bot
-
-
-async def cmd_start(message, *args, **kwargs):
-    return SendMessage(chat_id=message.chat.id, text=f'Hi from webhook, bot {message.via_bot}',
-                       reply_to_message_id=message.message_id)
-
-
-class CustomRequestHandler(WebhookRequestHandler):
-
-    def __init__(self, *args, **kwargs):
-        self._dispatcher = None
-        super(CustomRequestHandler, self).__init__(*args, **kwargs)
-
-    async def _create_dispatcher(self):
-        key = self.request.url.path[1:]
-
-        bot = await Bot.filter(code=key).first()
-        if not bot:
-            return None
-
-        dp = Dispatcher(AioBot(bot.token))
-
-        dp.register_message_handler(cmd_start, commands=['start'])
-
-        return dp
-
-    async def post(self):
-        # TODO: refactor
-        logger.info(f"post request to {self}")
-        self._dispatcher = await self._create_dispatcher()
-        res = await super(CustomRequestHandler, self).post()
-        self._dispatcher = None
-        return res
-
-    def get_dispatcher(self):
-        """
-        Get Dispatcher instance from environment
-
-        :return: :class:`aiogram.Dispatcher`
-        """
-        return self._dispatcher
 
 
 def main():
