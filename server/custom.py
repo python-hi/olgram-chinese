@@ -52,7 +52,7 @@ async def message_handler(message, *args, **kwargs):
             chat_id = int(chat_id)
             try:
                 await message.copy_to(chat_id)
-            except exceptions.MessageError:
+            except (exceptions.MessageError, exceptions.BotBlocked):
                 await message.reply("Невозможно переслать сообщение: возможно, автор заблокировал бота")
                 return
         else:
