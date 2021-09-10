@@ -47,9 +47,9 @@ async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
         return
 
     chat_obj = await bot.group_chats.filter(id=chat).first()
-    if not chat:
+    if not chat_obj:
         await call.answer("Нельзя привязать бота к этому чату")
         return
-    bot.group_chat = chat
+    bot.group_chat = chat_obj
     await bot.save()
     await call.answer(f"Выбран чат {chat_obj.name}")

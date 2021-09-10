@@ -48,12 +48,15 @@ async def message_handler(message, *args, **kwargs):
             if not chat_id:
                 chat_id = message.reply_to_message.forward_from_chat
                 if not chat_id:
-                    return SendMessage(chat_id=message.chat.id, text="Невозможно переслать сообщение: автор не найден")
+                    return SendMessage(chat_id=message.chat.id,
+                                       text="__Невозможно переслать сообщение: автор не найден__",
+                                       parse_mode="Markdown")
             chat_id = int(chat_id)
             try:
                 await message.copy_to(chat_id)
             except (exceptions.MessageError, exceptions.BotBlocked):
-                await message.reply("Невозможно переслать сообщение: возможно, автор заблокировал бота")
+                await message.reply("__Невозможно переслать сообщение (автор заблокировал бота?)__",
+                                    parse_mode="Markdown")
                 return
         else:
             await message.forward(super_chat_id)
