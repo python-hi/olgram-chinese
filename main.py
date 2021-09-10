@@ -20,13 +20,31 @@ async def init_database():
     await Tortoise.init(config=TORTOISE_ORM)
 
 
+async def init_olgram():
+    from olgram.router import bot
+    from aiogram.types import BotCommand
+    await bot.set_my_commands(
+        [
+            BotCommand("start", "Запустить бота"),
+            BotCommand("addbot", "Добавить нового бота"),
+            BotCommand("mybots", "Список ботов"),
+            BotCommand("help", "Справка")
+        ]
+    )
+
+
+async def initialization():
+    await init_database()
+    await init_redis()
+    await init_olgram()
+
+
 def main():
     """
     Classic polling
     """
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(init_database())
-    loop.run_until_complete(init_redis())
+    loop.run_until_complete(initialization())
 
     loop.create_task(dp.start_polling())
     loop.create_task(server_main().start())
