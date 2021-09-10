@@ -8,7 +8,8 @@ from olgram.models.models import Bot
 async def message_handler(message, *args, **kwargs):
     if message.text and message.text.startswith("/start"):
         # На команду start нужно ответить, не пересылая сообщение никуда
-        return SendMessage(chat_id=message.chat.id, text=f'Hi from webhook {args} {kwargs}')
+        bot = AioBot.get_current()
+        return SendMessage(chat_id=message.chat.id, text=f'Hi from webhook {args} {kwargs} {bot}')
 
 
 class CustomRequestHandler(WebhookRequestHandler):
