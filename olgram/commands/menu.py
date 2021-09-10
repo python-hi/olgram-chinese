@@ -150,16 +150,16 @@ async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = 
     )
 
     text = dedent("""
-    Сейчас вы редактируете текст, который отправляется после того, как пользователь отправит вашему боту
+    Сейчас вы редактируете текст, который отправляется после того, как пользователь отправит вашему боту {0}
     команду /start
 
     Текущий текст:
     ```
-    {0}
+    {1}
     ```
     Отправьте сообщение, чтобы изменить текст.
     """)
-    text = text.format(bot.start_text)
+    text = text.format(bot.name, bot.start_text)
     if call:
         await edit_or_create(call, text, keyboard, parse_mode="markdown")
     else:
