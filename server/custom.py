@@ -5,21 +5,21 @@ from aiogram import exceptions
 from aiogram import types
 from contextvars import ContextVar
 from aiohttp.web_exceptions import HTTPNotFound
-import aioredis
+from aioredis.commands import create_redis_pool
+from aioredis import Redis
 import typing as ty
 from olgram.settings import ServerSettings
-
 
 from olgram.models.models import Bot
 
 db_bot_instance: ContextVar[Bot] = ContextVar('db_bot_instance')
 
-_redis: ty.Optional[aioredis.Redis] = None
+_redis: ty.Optional[Redis] = None
 
 
 async def init_redis():
     global _redis
-    _redis = await aioredis.create_redis_pool(ServerSettings.redis_path())
+    _redis = await create_redis_pool(ServerSettings.redis_path())
 
 
 def _message_unique_id(bot_id: int, message_id: int) -> str:
