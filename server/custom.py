@@ -10,7 +10,7 @@ from aioredis import Redis
 import typing as ty
 from olgram.settings import ServerSettings
 
-from olgram.models.models import Bot
+from olgram.models.models import Bot, GroupChat
 
 db_bot_instance: ContextVar[Bot] = ContextVar('db_bot_instance')
 
@@ -59,6 +59,29 @@ async def message_handler(message, *args, **kwargs):
             await message.forward(super_chat_id)
 
 
+async def receive_invite(message: types.Message):
+    bot = db_bot_instance.get()
+    for member in message.new_chat_members:
+        if member.id == message.bot.id:
+            chat, _ = await GroupChat.get_or_create(chat_id=message.chat.id,
+                                                    defaults={"name": message.chat.full_name})
+            if chat not in await bot.group_chats.all():
+                await bot.group_chats.add(chat)
+                await bot.save()
+            break
+
+
+async def receive_left(message: types.Message):
+    bot = db_bot_instance.get()
+    if message.left_chat_member.id == message.bot.id:
+        chat = await bot.group_chats.filter(chat_id=message.chat.id).first()
+        if chat:
+            await bot.group_chats.remove(chat)
+            if bot.group_chat == chat:
+                bot.group_chat = None
+                await bot.save(update_fields=["group_chat"])
+
+
 class CustomRequestHandler(WebhookRequestHandler):
 
     def __init__(self, *args, **kwargs):
@@ -83,6 +106,8 @@ class CustomRequestHandler(WebhookRequestHandler):
                                                                     types.ContentType.STICKER,
                                                                     types.ContentType.VIDEO,
                                                                     types.ContentType.VOICE])
+        dp.register_message_handler(receive_invite, content_types=[types.ContentType.NEW_CHAT_MEMBERS])
+        dp.register_message_handler(receive_left, content_types=[types.ContentType.LEFT_CHAT_MEMBER])
 
         return dp
 
