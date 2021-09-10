@@ -69,6 +69,7 @@ class CustomRequestHandler(WebhookRequestHandler):
 
     async def post(self):
         # TODO: refactor
+        logger.info(f"post request to {self}")
         self._dispatcher = await self._create_dispatcher()
         res = await super(CustomRequestHandler, self).post()
         self._dispatcher = None
