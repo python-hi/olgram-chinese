@@ -18,6 +18,7 @@ class CustomRequestHandler(WebhookRequestHandler):
         self._dispatcher = None
         super(CustomRequestHandler, self).__init__(*args, **kwargs)
 
+
     async def _create_dispatcher(self):
         key = self.request.url.path[1:]
 
@@ -40,11 +41,10 @@ class CustomRequestHandler(WebhookRequestHandler):
         return dp
 
     async def post(self):
-        # TODO: refactor
-        self._dispatcher = await self._create_dispatcher()
-        res = await super(CustomRequestHandler, self).post()
-        self._dispatcher = None
-        return res
+        dispatcher = await self._create_dispatcher()
+        Dispatcher.set_current(dispatcher)
+        AioBot.set_current(dispatcher.bot)
+        return await super(CustomRequestHandler, self).post()
 
     def get_dispatcher(self):
         """
@@ -52,4 +52,5 @@ class CustomRequestHandler(WebhookRequestHandler):
 
         :return: :class:`aiogram.Dispatcher`
         """
-        return self._dispatcher
+        return Dispatcher.get_current()
+
