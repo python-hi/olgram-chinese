@@ -33,7 +33,7 @@ class Bot(Model):
 
 class User(Model):
     id = fields.IntField(pk=True)
-    telegram_id = fields.IntField(index=True, unique=True)
+    telegram_id = fields.BigIntField(index=True, unique=True)
 
     class Meta:
         table = 'user'
@@ -41,7 +41,7 @@ class User(Model):
 
 class GroupChat(Model):
     id = fields.IntField(pk=True)
-    chat_id = fields.IntField(index=True, unique=True)
+    chat_id = fields.BigIntField(index=True, unique=True)
     name = fields.CharField(max_length=50)
 
     class Meta:
