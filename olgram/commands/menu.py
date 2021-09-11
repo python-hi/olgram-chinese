@@ -154,16 +154,16 @@ async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = 
     команду /start
 
     Текущий текст:
-    ```
+    <pre>
     {1}
-    ```
+    </pre>
     Отправьте сообщение, чтобы изменить текст.
     """)
     text = text.format(bot.name, bot.start_text)
     if call:
-        await edit_or_create(call, text, keyboard, parse_mode="markdown")
+        await edit_or_create(call, text, keyboard, parse_mode="HTML")
     else:
-        await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard, parse_mode="markdown")
+        await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard, parse_mode="HTML")
 
 
 @dp.message_handler(state="wait_start_text", content_types="text", regexp="^[^/].+")  # Not command
