@@ -5,3 +5,4 @@ venv
 __pycache__
 *.pyc
 config.json
+docker-compose-release.yaml
