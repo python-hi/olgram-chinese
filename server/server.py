@@ -2,6 +2,7 @@ from aiogram import Bot as AioBot
 from olgram.models.models import Bot
 from aiohttp import web
 from asyncio import get_event_loop
+import ssl
 from olgram.settings import ServerSettings
 from .custom import CustomRequestHandler
 
@@ -28,7 +29,10 @@ async def register_token(bot: Bot) -> bool:
     await unregister_token(bot.token)
 
     a_bot = AioBot(bot.token)
-    res = await a_bot.set_webhook(url_for_bot(bot))
+    certificate = None
+    if ServerSettings.use_custom_cert():
+        certificate = ServerSettings.public_path()
+    res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate)
     await a_bot.session.close()
     del a_bot
     return res
@@ -52,8 +56,13 @@ def main():
     app = web.Application()
     app.router.add_route('*', r"/{name}", CustomRequestHandler, name='webhook_handler')
 
+    context = None
+    if ServerSettings.use_custom_cert():
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context.load_cert_chain(ServerSettings.public_path(), ServerSettings.priv_path())
+
     runner = web.AppRunner(app)
     loop.run_until_complete(runner.setup())
     logger.info("Server initialization done")
-    site = web.TCPSite(runner, host=ServerSettings.app_host(), port=ServerSettings.app_port())
+    site = web.TCPSite(runner, host=ServerSettings.app_host(), port=ServerSettings.app_port(), ssl_context=context)
     return site

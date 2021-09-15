@@ -1,8 +1,5 @@
 name: Deploy
-on:
-  push:
-    branches:
-      - stable
+on: push
 env:
   IMAGE_NAME: bot
   USERNAME: mihalin

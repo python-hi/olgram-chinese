@@ -8,9 +8,9 @@ load_dotenv()
 
 class AbstractSettings(ABC):
     @classmethod
-    def _get_env(cls, parameter: str) -> str:
+    def _get_env(cls, parameter: str, allow_none: bool = False) -> str:
         parameter = os.getenv(parameter, None)
-        if not parameter:
+        if not parameter and not allow_none:
             raise ValueError(f"{parameter} not defined in ENV")
         return parameter
 
@@ -53,6 +53,19 @@ class ServerSettings(AbstractSettings):
         :return:
         """
         return cls._get_env("REDIS_PATH")
+
+    @classmethod
+    def use_custom_cert(cls) -> bool:
+        use = cls._get_env("CUSTOM_CERT", allow_none=True)
+        return use and "true" in use.lower()
+
+    @classmethod
+    def priv_path(cls) -> str:
+        return "/cert/private.key"
+
+    @classmethod
+    def public_path(cls) -> str:
+        return "/cert/public.pem"
 
 
 class BotSettings(AbstractSettings):

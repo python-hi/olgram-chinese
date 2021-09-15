@@ -1,0 +1,45 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - default
+  redis:
+    image: 'bitnami/redis:latest'
+    restart: unless-stopped
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redis-db:/bitnami/redis/data
+    env_file:
+      - .env
+    networks:
+      - default
+  olgram:
+    image: ghcr.io/civsocit/olgram/bot:stable
+    restart: unless-stopped
+    networks:
+      - default
+    env_file:
+      - .env
+    volumes:
+      - olgram-cert:/cert
+    ports:
+      - "${WEBHOOK_PORT}:80"
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  database:
+  redis-db:
+  olgram-cert:
+
+networks:
+  default:
+    driver: bridge
