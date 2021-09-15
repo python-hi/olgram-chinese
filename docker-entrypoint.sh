@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-if [[ -z "${CUSTOM_CERT}" ]]; then
+if [[ ! -z "${CUSTOM_CERT}" ]]; then
   echo "Use custom certificate"
   if [ ! -f /cert/private.key ]; then
     echo "Generate new certificate"
