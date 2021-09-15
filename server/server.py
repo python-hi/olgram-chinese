@@ -31,10 +31,9 @@ async def register_token(bot: Bot) -> bool:
     a_bot = AioBot(bot.token)
     certificate = None
     if ServerSettings.use_custom_cert():
-        with open(ServerSettings.public_path(), "r") as file:
-            certificate = file.read()
+        certificate = open(ServerSettings.public_path(), 'rb')
 
-    res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate)
+    res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate, drop_pending_updates=True)
     await a_bot.session.close()
     del a_bot
     return res
@@ -47,7 +46,7 @@ async def unregister_token(token: str):
     :return:
     """
     bot = AioBot(token)
-    await bot.delete_webhook()
+    await bot.delete_webhook(drop_pending_updates=True)
     await bot.session.close()
     del bot
 
