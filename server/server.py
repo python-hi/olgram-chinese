@@ -31,7 +31,9 @@ async def register_token(bot: Bot) -> bool:
     a_bot = AioBot(bot.token)
     certificate = None
     if ServerSettings.use_custom_cert():
-        certificate = ServerSettings.public_path()
+        with open(ServerSettings.public_path(), "r") as file:
+            certificate = file.read()
+
     res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate)
     await a_bot.session.close()
     del a_bot
