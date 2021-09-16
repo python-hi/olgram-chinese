@@ -7,8 +7,6 @@ services:
       - .env
     volumes:
       - database:/var/lib/postgresql/data
-    networks:
-      - default
   redis:
     image: 'bitnami/redis:latest'
     restart: unless-stopped
@@ -18,13 +16,9 @@ services:
       - redis-db:/bitnami/redis/data
     env_file:
       - .env
-    networks:
-      - default
   olgram:
     image: ghcr.io/civsocit/olgram/bot:stable
     restart: unless-stopped
-    networks:
-      - default
     env_file:
       - .env
     volumes:
@@ -39,7 +33,3 @@ volumes:
   database:
   redis-db:
   olgram-cert:
-
-networks:
-  default:
-    driver: bridge

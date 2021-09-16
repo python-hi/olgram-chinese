@@ -67,6 +67,10 @@ class ServerSettings(AbstractSettings):
     def public_path(cls) -> str:
         return "/cert/public.pem"
 
+    @classmethod
+    def append_text(cls) -> str:
+        return "\n\nЭтот бот создан с помощью @OlgramBot"
+
 
 class BotSettings(AbstractSettings):
     @classmethod

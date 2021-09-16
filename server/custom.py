@@ -32,7 +32,7 @@ async def message_handler(message, *args, **kwargs):
     if message.text and message.text.startswith("/start"):
         # На команду start нужно ответить, не пересылая сообщение никуда
         return SendMessage(chat_id=message.chat.id,
-                           text=bot.start_text)
+                           text=bot.start_text + ServerSettings.append_text())
 
     super_chat_id = await bot.super_chat_id()
 
