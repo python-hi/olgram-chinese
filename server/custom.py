@@ -7,10 +7,12 @@ from contextvars import ContextVar
 from aiohttp.web_exceptions import HTTPNotFound
 from aioredis.commands import create_redis_pool
 from aioredis import Redis
+import logging
 import typing as ty
 from olgram.settings import ServerSettings
-
 from olgram.models.models import Bot, GroupChat
+
+_logger = logging.getLogger(__name__)
 
 db_bot_instance: ContextVar[Bot] = ContextVar('db_bot_instance')
 
@@ -75,18 +77,16 @@ async def receive_invite(message: types.Message):
 
 
 async def receive_left(message: types.Message):
-    print("receive left")
+    _logger.info("Receive left")
     bot = db_bot_instance.get()
     if message.left_chat_member.id == message.bot.id:
         chat = await bot.group_chats.filter(chat_id=message.chat.id).first()
-        print("chat found", chat)
+        _logger.info(f"chat found {chat}")
         if chat:
             await bot.group_chats.remove(chat)
-            print("chat removed")
-            print(bot.group_chat)
-            print(chat)
+            _logger.info(f"chat removed {bot.group_chat} {chat}")
             if bot.group_chat == chat:
-                print("saved")
+                _logger.info("saved")
                 bot.group_chat = None
                 await bot.save(update_fields=["group_chat"])
 
