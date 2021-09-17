@@ -12,6 +12,7 @@ import typing as ty
 from olgram.settings import ServerSettings
 from olgram.models.models import Bot, GroupChat
 
+logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
 db_bot_instance: ContextVar[Bot] = ContextVar('db_bot_instance')
