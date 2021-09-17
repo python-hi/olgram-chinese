@@ -75,6 +75,7 @@ async def receive_invite(message: types.Message):
 
 
 async def receive_left(message: types.Message):
+    print("receive left")
     bot = db_bot_instance.get()
     if message.left_chat_member.id == message.bot.id:
         chat = await bot.group_chats.filter(chat_id=message.chat.id).first()
