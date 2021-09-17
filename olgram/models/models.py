@@ -42,7 +42,7 @@ class User(Model):
 class GroupChat(Model):
     id = fields.IntField(pk=True)
     chat_id = fields.BigIntField(index=True, unique=True)
-    name = fields.CharField(max_length=50)
+    name = fields.CharField(max_length=255)
 
     class Meta:
         table = 'group_chat'
