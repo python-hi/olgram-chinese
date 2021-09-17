@@ -86,8 +86,9 @@ async def receive_left(message: types.Message):
         _logger.info(f"chat found {chat}")
         if chat:
             await bot.group_chats.remove(chat)
-            _logger.info(f"chat removed {bot.group_chat} {chat}")
-            if bot.group_chat == chat:
+            bot_group_chat = await bot.group_chat
+            _logger.info(f"chat removed {bot_group_chat} {chat}")
+            if bot_group_chat == chat:
                 _logger.info("saved")
                 bot.group_chat = None
                 await bot.save(update_fields=["group_chat"])
