@@ -49,8 +49,6 @@ async def add_bot(message: types.Message, state: FSMContext):
     3. После создания бота перешлите ответное сообщение в этот бот или скопируйте и пришлите token бота.
 
     Важно: не подключайте боты, которые используются в других сервисах (Manybot, Chatfuel, Livegram и других).
-
-    Подробную инструкцию по созданию бота читайте здесь /help)
     """))
     await state.set_state("add_bot")
 

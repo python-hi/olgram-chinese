@@ -113,7 +113,8 @@ async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
     await edit_or_create(call, dedent(f"""
     Управление ботом @{bot.name}.
 
-    Если у вас возникли вопросы по настройке бота, то посмотрите нашу справку /help.
+    Если у вас возникли вопросы по настройке бота, то посмотрите нашу справку /help или напишите нам 
+    @civsocit_feedback_bot
     """), reply_markup=keyboard)
 
 
