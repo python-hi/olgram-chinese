@@ -28,8 +28,6 @@ async def start(message: types.Message, state: FSMContext):
     /mybots - управление ботами
 
     /help - помощь
-
-    Ссылка на репозиторий https://github.com/civsocit/olgram
     """))
 
 
@@ -40,6 +38,8 @@ async def help(message: types.Message, state: FSMContext):
     """
     await message.answer(dedent(f"""
     О проекте https://telegra.ph/Olgram-09-15
+
+    Репозиторий https://github.com/civsocit/olgram
 
     Поддержка: @civsocit_feedback_bot
 
