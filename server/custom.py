@@ -12,6 +12,7 @@ import typing as ty
 from olgram.settings import ServerSettings
 from olgram.models.models import Bot, GroupChat
 
+
 logging.basicConfig(level=logging.INFO)
 _logger = logging.getLogger(__name__)
 
@@ -72,6 +73,7 @@ async def receive_invite(message: types.Message):
         if member.id == message.bot.id:
             chat, _ = await GroupChat.get_or_create(chat_id=message.chat.id,
                                                     defaults={"name": message.chat.full_name})
+            chat.name = message.chat.full_name
             if chat not in await bot.group_chats.all():
                 await bot.group_chats.add(chat)
                 await bot.save()
@@ -79,19 +81,15 @@ async def receive_invite(message: types.Message):
 
 
 async def receive_left(message: types.Message):
-    _logger.info("Receive left")
     bot = db_bot_instance.get()
     if message.left_chat_member.id == message.bot.id:
         chat = await bot.group_chats.filter(chat_id=message.chat.id).first()
-        _logger.info(f"chat found {chat}")
         if chat:
             await bot.group_chats.remove(chat)
             bot_group_chat = await bot.group_chat
-            _logger.info(f"chat removed {bot_group_chat} {chat}")
             if bot_group_chat == chat:
-                _logger.info("saved")
                 bot.group_chat = None
-                await bot.save(update_fields=["group_chat"])
+            await bot.save()
 
 
 class CustomRequestHandler(WebhookRequestHandler):

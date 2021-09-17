@@ -5,7 +5,7 @@ from olgram.models.models import Bot, User
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.callback_data import CallbackData
 from textwrap import dedent
-from olgram.utils.mix import edit_or_create
+from olgram.utils.mix import edit_or_create, button_text_limit
 from olgram.commands import bot_actions
 
 import typing as ty
@@ -57,7 +57,7 @@ async def send_chats_menu(bot: Bot, call: types.CallbackQuery):
 
     for chat in chats:
         keyboard.insert(
-            types.InlineKeyboardButton(text=chat.name,
+            types.InlineKeyboardButton(text=button_text_limit(chat.name),
                                        callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="chat",
                                                                        chat=chat.id))
         )

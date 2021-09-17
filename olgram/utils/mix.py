@@ -20,3 +20,10 @@ async def edit_or_create(call: CallbackQuery, message: str,
     except TelegramAPIError:  # кнопка устарела
         await call.bot.send_message(call.message.chat.id, text=message, reply_markup=reply_markup,
                                     parse_mode=parse_mode)
+
+
+def button_text_limit(data: str) -> str:
+    max_len = 30
+    if len(data) > max_len:
+        data = data[:max_len-4] + "..."
+    return data
