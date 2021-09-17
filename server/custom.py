@@ -74,6 +74,7 @@ async def receive_invite(message: types.Message):
             chat, _ = await GroupChat.get_or_create(chat_id=message.chat.id,
                                                     defaults={"name": message.chat.full_name})
             chat.name = message.chat.full_name
+            await chat.save()
             if chat not in await bot.group_chats.all():
                 await bot.group_chats.add(chat)
                 await bot.save()
