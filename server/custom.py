@@ -78,9 +78,14 @@ async def receive_left(message: types.Message):
     bot = db_bot_instance.get()
     if message.left_chat_member.id == message.bot.id:
         chat = await bot.group_chats.filter(chat_id=message.chat.id).first()
+        print("chat found", chat)
         if chat:
             await bot.group_chats.remove(chat)
+            print("chat removed")
+            print(bot.group_chat)
+            print(chat)
             if bot.group_chat == chat:
+                print("saved")
                 bot.group_chat = None
                 await bot.save(update_fields=["group_chat"])
 
