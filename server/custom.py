@@ -29,6 +29,7 @@ def _message_unique_id(bot_id: int, message_id: int) -> str:
 
 
 async def message_handler(message, *args, **kwargs):
+    _logger.info("message handler")
     bot = db_bot_instance.get()
 
     if message.text and message.text.startswith("/start"):
