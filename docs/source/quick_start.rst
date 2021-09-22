@@ -92,5 +92,5 @@ BotFather - это официальный бот Telegram, создающий д
 
 .. note::
 
-   Если у вас возникли проблемы в настройке бота - напишите там
-`@civsocit_feedback_bot <https://t.me/civsocit_feedback_bot>`_.
+   Если у вас возникли вопросы по использованию бота, или вы нашли ошибку - напишите
+   нам `@civsocit_feedback_bot <https://t.me/civsocit_feedback_bot>`_.
