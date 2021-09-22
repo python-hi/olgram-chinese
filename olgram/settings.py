@@ -26,7 +26,7 @@ class OlgramSettings(AbstractSettings):
 
     @classmethod
     def version(cls):
-        return "0.0.4"
+        return "0.0.5"
 
 
 class ServerSettings(AbstractSettings):
