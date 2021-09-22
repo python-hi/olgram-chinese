@@ -37,11 +37,7 @@ async def help(message: types.Message, state: FSMContext):
     Команда /help
     """
     await message.answer(dedent(f"""
-    О проекте https://telegra.ph/Olgram-09-15
-
-    Репозиторий https://github.com/civsocit/olgram
-
-    Поддержка: @civsocit_feedback_bot
-
+    Читайте инструкции на нашем сайте https://olgram.readthedocs.io
+    Техническая поддержка: @civsocit_feedback_bot
     Версия {OlgramSettings.version()}
     """))
