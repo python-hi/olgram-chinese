@@ -20,8 +20,8 @@ async def start(message: types.Message, state: FSMContext):
     # TODO: locale
 
     await message.answer(dedent("""
-    Olgram Bot — это конструктор ботов обратной связи в Telegram. Подробнее
-    <a href="https://olgram.readthedocs.io">читайте здесь</a>.
+    Olgram Bot — это конструктор ботов обратной связи в Telegram. Подробнее \
+<a href="https://olgram.readthedocs.io">читайте здесь</a>.
 
     Используйте эти команды, чтобы управлять этим ботом:
 
