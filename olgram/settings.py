@@ -22,7 +22,7 @@ class OlgramSettings(AbstractSettings):
         Максимальное количество ботов у одного пользователя
         :return: int
         """
-        return 5
+        return 10
 
     @classmethod
     def version(cls):
