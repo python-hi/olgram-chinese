@@ -52,7 +52,7 @@ async def message_handler(message, *args, **kwargs):
     else:
         # Это супер-чат
         if message.reply_to_message:
-            # Ответ из супер-чата переслать тому пользователю,
+            # В супер-чате кто-то ответил на сообщение пользователя, нужно переслать тому пользователю
             chat_id = await _redis.get(_message_unique_id(bot.pk, message.reply_to_message.message_id))
             if not chat_id:
                 chat_id = message.reply_to_message.forward_from_chat
@@ -68,7 +68,11 @@ async def message_handler(message, *args, **kwargs):
                                     parse_mode="HTML")
                 return
         else:
+            # в супер-чате кто-то пишет сообщение сам себе
             await message.forward(super_chat_id)
+            # И отправить пользователю специальный текст, если он указан
+            if bot.second_text:
+                return SendMessage(chat_id=message.chat.id, text=bot.second_text)
 
 
 async def receive_invite(message: types.Message):
