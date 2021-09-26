@@ -26,9 +26,9 @@ async def register_token(bot: Bot) -> bool:
     :param bot: Бот
     :return: получилось ли
     """
-    await unregister_token(bot.token)
+    await unregister_token(bot.decrypted_token())
 
-    a_bot = AioBot(bot.token)
+    a_bot = AioBot(bot.decrypted_token())
     certificate = None
     if ServerSettings.use_custom_cert():
         certificate = open(ServerSettings.public_path(), 'rb')

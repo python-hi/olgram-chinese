@@ -11,4 +11,5 @@ fi
 
 sleep 10
 aerich upgrade
+python migrate.py
 python main.py

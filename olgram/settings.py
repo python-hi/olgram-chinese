@@ -1,18 +1,22 @@
 from dotenv import load_dotenv
 from abc import ABC
 import os
+from olgram.utils.crypto import Cryptor
+from functools import lru_cache
 
 
 load_dotenv()
 
 
+# TODO: рефакторинг, использовать какой-нибудь lazy-config вместо своих костылей
+
 class AbstractSettings(ABC):
     @classmethod
     def _get_env(cls, parameter: str, allow_none: bool = False) -> str:
-        parameter = os.getenv(parameter, None)
-        if not parameter and not allow_none:
+        parameter_v = os.getenv(parameter, None)
+        if not parameter_v and not allow_none:
             raise ValueError(f"{parameter} not defined in ENV")
-        return parameter
+        return parameter_v
 
 
 class OlgramSettings(AbstractSettings):
@@ -98,6 +102,12 @@ class DatabaseSettings(AbstractSettings):
     @classmethod
     def host(cls) -> str:
         return cls._get_env("POSTGRES_HOST")
+
+    @classmethod
+    @lru_cache
+    def cryptor(cls) -> Cryptor:
+        password = cls._get_env("TOKEN_ENCRYPTION_KEY")
+        return Cryptor(password)
 
 
 TORTOISE_ORM = {

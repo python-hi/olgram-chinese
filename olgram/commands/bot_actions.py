@@ -12,7 +12,7 @@ async def delete_bot(bot: Bot, call: types.CallbackQuery):
     Пользователь решил удалить бота
     """
     try:
-        await unregister_token(bot.token)
+        await unregister_token(bot.decrypted_token())
     except Unauthorized:
         # Вероятно пользователь сбросил токен или удалил бот, это уже не наши проблемы
         pass

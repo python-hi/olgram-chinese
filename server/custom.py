@@ -114,7 +114,7 @@ class CustomRequestHandler(WebhookRequestHandler):
         if not bot:
             return None
         db_bot_instance.set(bot)
-        dp = Dispatcher(AioBot(bot.token))
+        dp = Dispatcher(AioBot(bot.decrypted_token()))
 
         dp.register_message_handler(message_handler, content_types=[types.ContentType.TEXT,
                                                                     types.ContentType.CONTACT,

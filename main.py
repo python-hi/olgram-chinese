@@ -47,7 +47,7 @@ def main():
     loop.run_until_complete(initialization())
 
     loop.create_task(dp.start_polling())
-    loop.create_task(server_main().start())
+    # loop.create_task(server_main().start())
 
     loop.run_forever()
 
