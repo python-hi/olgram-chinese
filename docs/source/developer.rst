@@ -13,8 +13,8 @@
 * ``POSTGRES_PASSWORD`` - любой случайный пароль
 * ``WEBHOOK_HOST`` - IP адрес или доменное имя сервера, на котором запускается проект
 
-2. Сохраните файл `docker-compose.yaml <https://github.com/civsocit/olgram/blob/main/docker-compose.yaml>`_
-и соберите его:
+2. Рядом с файлом .env сохраните файл
+`docker-compose.yaml <https://github.com/civsocit/olgram/blob/main/docker-compose.yaml>`_ и соберите его:
 
 .. code-block:: console
 

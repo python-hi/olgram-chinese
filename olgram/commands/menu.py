@@ -143,13 +143,18 @@ async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = 
         await call.answer()
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.insert(
-        types.InlineKeyboardButton(text="Сбросить текст",
-                                   callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="reset_text",
+        types.InlineKeyboardButton(text="<< Завершить редактирование",
+                                   callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
+    )
+    keyboard.insert(
+        types.InlineKeyboardButton(text="Следующий текст",
+                                   callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="next_text",
                                                                    chat=empty))
     )
     keyboard.insert(
-        types.InlineKeyboardButton(text="<< Завершить редактирование",
-                                   callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
+        types.InlineKeyboardButton(text="Сбросить текст",
+                                   callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="reset_text",
+                                                                   chat=empty))
     )
 
     text = dedent("""
@@ -169,6 +174,43 @@ async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = 
         await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard, parse_mode="HTML")
 
 
+async def send_bot_second_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = None,
+                                    chat_id: ty.Optional[int] = None):
+    if call:
+        await call.answer()
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    keyboard.insert(
+        types.InlineKeyboardButton(text="<< Завершить редактирование",
+                                   callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
+    )
+    keyboard.insert(
+        types.InlineKeyboardButton(text="Предыдущий текст",
+                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="text",
+                                                                   chat=empty))
+    )
+    keyboard.insert(
+        types.InlineKeyboardButton(text="Сбросить текст",
+                                   callback_data=menu_callback.new(level=3, bot_id=bot.id,
+                                                                   operation="reset_second_text", chat=empty))
+    )
+
+    text = dedent("""
+    Сейчас вы редактируете текст автоответчика. Это сообщение отправляется в ответ на все входящие сообщения @{0} \
+автоматически. По умолчанию оно отключено.
+
+    Текущий текст:
+    <pre>
+    {1}
+    </pre>
+    Отправьте сообщение, чтобы изменить текст.
+    """)
+    text = text.format(bot.name, bot.second_text if bot.second_text else "(отключено)")
+    if call:
+        await edit_or_create(call, text, keyboard, parse_mode="HTML")
+    else:
+        await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard, parse_mode="HTML")
+
+
 @dp.message_handler(state="wait_start_text", content_types="text", regexp="^[^/].+")  # Not command
 async def start_text_received(message: types.Message, state: FSMContext):
     async with state.proxy() as proxy:
@@ -177,6 +219,16 @@ async def start_text_received(message: types.Message, state: FSMContext):
     bot.start_text = message.text
     await bot.save()
     await send_bot_text_menu(bot, chat_id=message.chat.id)
+
+
+@dp.message_handler(state="wait_second_text", content_types="text", regexp="^[^/].+")  # Not command
+async def second_text_received(message: types.Message, state: FSMContext):
+    async with state.proxy() as proxy:
+        bot_id = proxy.get("bot_id")
+    bot = await Bot.get_or_none(pk=bot_id)
+    bot.second_text = message.text
+    await bot.save()
+    await send_bot_second_text_menu(bot, chat_id=message.chat.id)
 
 
 @dp.callback_query_handler(menu_callback.filter(), state="*")
@@ -216,3 +268,11 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
         if operation == "reset_text":
             await bot_actions.reset_bot_text(bot, call)
             return await send_bot_text_menu(bot, call)
+        if operation == "next_text":
+            await state.set_state("wait_second_text")
+            async with state.proxy() as proxy:
+                proxy["bot_id"] = bot.id
+            return await send_bot_second_text_menu(bot, call)
+        if operation == "reset_second_text":
+            await bot_actions.reset_bot_second_text(bot, call)
+            return await send_bot_second_text_menu(bot, call)

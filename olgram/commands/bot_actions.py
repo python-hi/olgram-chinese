@@ -36,6 +36,18 @@ async def reset_bot_text(bot: Bot, call: types.CallbackQuery):
     await call.answer("Текст сброшен")
 
 
+async def reset_bot_second_text(bot: Bot, call: types.CallbackQuery):
+    """
+    Пользователь решил сбросить second text бота
+    :param bot:
+    :param call:
+    :return:
+    """
+    bot.second_text = bot._meta.fields_map['second_text'].default
+    await bot.save()
+    await call.answer("Текст сброшен")
+
+
 async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
     """
     Пользователь выбрал чат, в который хочет получать сообщения от бота

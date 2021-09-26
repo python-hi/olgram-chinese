@@ -14,6 +14,7 @@ class Bot(Model):
     Здравствуйте!
     Напишите ваш вопрос и мы ответим вам в ближайшее время.
     """))
+    second_text = fields.TextField(null=True, default=None)
 
     group_chats = fields.ManyToManyField("models.GroupChat", related_name="bots", on_delete=fields.relational.CASCADE,
                                          null=True)

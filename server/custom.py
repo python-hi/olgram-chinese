@@ -45,6 +45,10 @@ async def message_handler(message, *args, **kwargs):
         # Это обычный чат: сообщение нужно переслать в супер-чат
         new_message = await message.forward(super_chat_id)
         await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id)
+
+        # И отправить пользователю специальный текст, если он указан
+        if bot.second_text:
+            return SendMessage(chat_id=message.chat.id, text=bot.second_text)
     else:
         # Это супер-чат
         if message.reply_to_message:
