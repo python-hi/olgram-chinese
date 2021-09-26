@@ -99,7 +99,8 @@ async def bot_added(message: types.Message, state: FSMContext):
         return await on_unknown_error()
 
     user, _ = await User.get_or_create(telegram_id=message.from_user.id)
-    bot = Bot(token=Bot.encrypted_token(token), owner=user, name=test_bot_info.username, super_chat_id=message.from_user.id)
+    bot = Bot(token=Bot.encrypted_token(token), owner=user, name=test_bot_info.username,
+              super_chat_id=message.from_user.id)
     try:
         await bot.save()
     except IntegrityError:
