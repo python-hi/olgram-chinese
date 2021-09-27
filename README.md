@@ -29,6 +29,7 @@
 * Создайте файл .env по образцу example.env. Вам нужно заполнить переменные:
   * BOT_TOKEN - токен нового бота, получить у [@botfather](https://t.me/botfather)
   * POSTGRES_PASSWORD - любой случайный пароль
+  * TOKEN_ENCRYPTION_KEY - любой случайный пароль, отличный от POSTGRES_PASSWORD
   * WEBHOOK_HOST - IP адрес или доменное имя сервера, на котором запускается проект
 * Сохраните файл docker-compose.yaml и соберите его:
 ```
