@@ -1,4 +1,5 @@
 import asyncio
+import argparse
 from tortoise import Tortoise
 
 from olgram.router import dp
@@ -43,11 +44,17 @@ def main():
     """
     Classic polling
     """
+    parser = argparse.ArgumentParser("Olgram server")
+    parser.add_argument("--noserver", help="Не запускать сервер обратной связи, только сам Olgram (режим для "
+                                           "разработки)", action="store_true")
+    args = parser.parse_args()
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(initialization())
 
     loop.create_task(dp.start_polling())
-    loop.create_task(server_main().start())
+    if not args.noserver:
+        loop.create_task(server_main().start())
 
     loop.run_forever()
 
