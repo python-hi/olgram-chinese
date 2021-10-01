@@ -32,6 +32,11 @@ class OlgramSettings(AbstractSettings):
     def version(cls):
         return "0.1.0"
 
+    @classmethod
+    @lru_cache
+    def admin_id(cls):
+        return cls._get_env("ADMIN_ID", True)
+
 
 class ServerSettings(AbstractSettings):
     @classmethod

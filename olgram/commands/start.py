@@ -6,11 +6,13 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from textwrap import dedent
 from olgram.settings import OlgramSettings
+from olgram.utils.permissions import public
 
 from olgram.router import dp
 
 
 @dp.message_handler(commands=["start"], state="*")
+@public()
 async def start(message: types.Message, state: FSMContext):
     """
     Команда /start
@@ -33,6 +35,7 @@ async def start(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(commands=["help"], state="*")
+@public()
 async def help(message: types.Message, state: FSMContext):
     """
     Команда /help
@@ -42,3 +45,12 @@ async def help(message: types.Message, state: FSMContext):
     Техническая поддержка: @civsocit_feedback_bot
     Версия {OlgramSettings.version()}
     """))
+
+
+@dp.message_handler(commands=["chatid"], state="*")
+@public()
+async def chat_id(message: types.Message, state: FSMContext):
+    """
+    Команда /chatid
+    """
+    await message.answer(message.chat.id)

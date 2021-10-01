@@ -3,7 +3,8 @@ import argparse
 from tortoise import Tortoise
 
 from olgram.router import dp
-from olgram.settings import TORTOISE_ORM
+from olgram.settings import TORTOISE_ORM, OlgramSettings
+from olgram.utils.permissions import AccessMiddleware
 from server.custom import init_redis
 
 import olgram.commands.bots  # noqa: F401
@@ -22,7 +23,8 @@ async def init_database():
 
 
 async def init_olgram():
-    from olgram.router import bot
+    from olgram.router import bot, dp
+    dp.setup_middleware(AccessMiddleware(OlgramSettings.admin_id()))
     from aiogram.types import BotCommand
     await bot.set_my_commands(
         [
