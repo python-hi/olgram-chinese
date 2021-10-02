@@ -35,7 +35,8 @@ class OlgramSettings(AbstractSettings):
     @classmethod
     @lru_cache
     def admin_id(cls):
-        return cls._get_env("ADMIN_ID", True)
+        _id = cls._get_env("ADMIN_ID", True)
+        return int(_id) if _id else None
 
 
 class ServerSettings(AbstractSettings):
