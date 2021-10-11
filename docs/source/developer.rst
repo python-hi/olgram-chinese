@@ -35,7 +35,7 @@
 
 * Приобрести домен и настроить его на свой хост
 * Наладить реверс-прокси и автоматическое обновление сертификатов - например, с помощью `Traefik <https://github.com/traefik/traefik>`_
-* Скрыть IP сервера с помощью `Cloudflire <https://www.cloudflare.com>`_, чтобы пользователи ботов не могли найти IP адрес хоста по Webhook бота.
+* Скрыть IP сервера с помощью `Cloudflare <https://www.cloudflare.com>`_, чтобы пользователи ботов не могли найти IP адрес хоста по Webhook бота.
 
 Пример более сложной конфигурации есть в файле `docker-compose-full.yaml <https://github.com/civsocit/olgram/blob/main/docker-compose-full.yaml>`_
 
