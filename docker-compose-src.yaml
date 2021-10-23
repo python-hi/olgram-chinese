@@ -1,4 +1,4 @@
-# Минимальная конфигурация сервера
+# Минимальная конфигурация сервера, код собирается из текущей директории
 version: '3'
 services:
   postgres:
@@ -18,7 +18,7 @@ services:
     env_file:
       - .env
   olgram:
-    image: ghcr.io/civsocit/olgram/bot:stable
+    build: .
     restart: unless-stopped
     env_file:
       - .env
