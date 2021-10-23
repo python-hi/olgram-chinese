@@ -4,7 +4,7 @@
 [![Deploy Status](https://github.com/civsocit/olgram/workflows/Deploy/badge.svg)](https://github.com/civsocit/olgram/actions?workflow=Deploy)
 [![Documentation](https://readthedocs.org/projects/olgram/badge/?version=latest)](https://olgram.readthedocs.io)
 
-[@olgram](https://t.me/olgrambot) - конструктор ботов обратной связи в Telegram
+[@OlgramBot](https://t.me/olgrambot) - конструктор ботов обратной связи в Telegram
 
 Документация: https://olgram.readthedocs.io
 
