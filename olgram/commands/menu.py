@@ -147,7 +147,7 @@ async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = 
                                    callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
     )
     keyboard.insert(
-        types.InlineKeyboardButton(text="Следующий текст",
+        types.InlineKeyboardButton(text="Автоответчик",
                                    callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="next_text",
                                                                    chat=empty))
     )
