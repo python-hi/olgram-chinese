@@ -89,6 +89,18 @@ async def receive_invite(message: types.Message):
             break
 
 
+async def receive_group_create(message: types.Message):
+    bot = db_bot_instance.get()
+
+    chat, _ = await GroupChat.get_or_create(chat_id=message.chat.id,
+                                            defaults={"name": message.chat.full_name})
+    chat.name = message.chat.full_name
+    await chat.save()
+    if chat not in await bot.group_chats.all():
+        await bot.group_chats.add(chat)
+        await bot.save()
+
+
 async def receive_left(message: types.Message):
     bot = db_bot_instance.get()
     if message.left_chat_member.id == message.bot.id:
@@ -139,6 +151,7 @@ class CustomRequestHandler(WebhookRequestHandler):
         dp.register_message_handler(receive_invite, content_types=[types.ContentType.NEW_CHAT_MEMBERS])
         dp.register_message_handler(receive_left, content_types=[types.ContentType.LEFT_CHAT_MEMBER])
         dp.register_message_handler(receive_migrate, content_types=[types.ContentType.MIGRATE_TO_CHAT_ID])
+        dp.register_message_handler(receive_group_create, content_types=[types.ContentType.GROUP_CHAT_CREATED])
 
         return dp
 
