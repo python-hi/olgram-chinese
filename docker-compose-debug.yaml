@@ -3,7 +3,7 @@
 version: '3'
 services:
   postgres:
-    image: kartoza/postgis
+    image: postgres:13.4
     environment:
       - POSTGRES_USER=test_user
       - POSTGRES_PASSWORD=test_passwd

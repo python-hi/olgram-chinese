@@ -101,6 +101,17 @@ async def receive_left(message: types.Message):
             await bot.save()
 
 
+async def receive_migrate(message: types.Message):
+    bot = db_bot_instance.get()
+    from_id = message.chat.id
+    to_id = message.migrate_to_chat_id
+
+    chats = await bot.group_chats.filter(chat_id=from_id)
+    for chat in chats:
+        chat.chat_id = to_id
+        await chat.save(update_fields=["chat_id"])
+
+
 class CustomRequestHandler(WebhookRequestHandler):
 
     def __init__(self, *args, **kwargs):
@@ -127,6 +138,7 @@ class CustomRequestHandler(WebhookRequestHandler):
                                                                     types.ContentType.VOICE])
         dp.register_message_handler(receive_invite, content_types=[types.ContentType.NEW_CHAT_MEMBERS])
         dp.register_message_handler(receive_left, content_types=[types.ContentType.LEFT_CHAT_MEMBER])
+        dp.register_message_handler(receive_migrate, content_types=[types.ContentType.MIGRATE_TO_CHAT_ID])
 
         return dp
 
