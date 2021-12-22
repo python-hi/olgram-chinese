@@ -7,3 +7,6 @@ __pycache__
 config.json
 docker-compose-release.yaml
 docs/build
+ad.md
+release.env
+test.py
