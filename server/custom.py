@@ -53,9 +53,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
         # Это супер-чат
 
         if message.chat.type.is_group_or_supergroup():
-            pass
-            # if not message.reply_to_message or not message.reply_to_message.from_user.is_bot:
-            #    return  # В групповом чате мы получили сообщение, которое вообще не предназначалось боту
+            if not message.reply_to_message or not message.reply_to_message.from_user.is_bot:
+                return  # В групповом чате мы получили сообщение, которое вообще не предназначалось боту
 
             # if not message.reply_to_message.is_forward():
             #    return  # В групповом чате кто-то ответил на текст /start, например
