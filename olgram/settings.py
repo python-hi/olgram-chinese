@@ -38,6 +38,12 @@ class OlgramSettings(AbstractSettings):
         _id = cls._get_env("ADMIN_ID", True)
         return int(_id) if _id else None
 
+    @classmethod
+    @lru_cache
+    def supervisor_id(cls):
+        _id = cls._get_env("SUPERVISOR_ID", True)
+        return int(_id) if _id else None
+
 
 class ServerSettings(AbstractSettings):
     @classmethod
