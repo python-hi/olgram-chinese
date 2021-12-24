@@ -16,7 +16,8 @@ async def info(message: types.Message, state: FSMContext):
     Команда /info
     """
 
-    if message.from_user.id != OlgramSettings.supervisor_id():
+    if message.chat.id != OlgramSettings.supervisor_id():
+        await message.answer("Недостаточно прав")
         return
 
     bots_count = len(await models.Bot.all())
