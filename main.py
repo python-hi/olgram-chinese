@@ -11,6 +11,7 @@ import olgram.commands.bots  # noqa: F401
 import olgram.commands.start  # noqa: F401
 import olgram.commands.menu  # noqa: F401
 import olgram.commands.bot_actions  # noqa: F401
+import olgram.commands.info  # noqa: F401
 
 from server.server import main as server_main
 
