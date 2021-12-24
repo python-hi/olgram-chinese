@@ -23,5 +23,5 @@ async def info(message: types.Message, state: FSMContext):
     bots_count = len(await models.Bot.all())
     user_count = len(await models.User.all())
 
-    await message.answer(f"Количество ботов: {bots_count}"
-                         f"Количество пользователей: {user_count}")
+    await message.answer(f"Количество ботов: {bots_count}\n"
+                         f"Количество пользователей: {user_count}\n")
