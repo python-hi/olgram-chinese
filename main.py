@@ -52,7 +52,7 @@ def main():
                                            "разработки)", action="store_true")
     args = parser.parse_args()
 
-    loop = asyncio.new_event_loop()
+    loop = asyncio.get_event_loop()
     loop.run_until_complete(initialization())
 
     loop.create_task(dp.start_polling())
