@@ -72,7 +72,7 @@ async def message_handler(message: types.Message, *args, **kwargs):
             chat_id = int(chat_id)
 
             if message.text == "/ban":
-                user, _ = await BannedUser.get_or_create(telegram_id=message.from_user.id, bot=bot)
+                user, _ = await BannedUser.get_or_create(telegram_id=chat_id, bot=bot)
                 await user.save()
                 return SendMessage(chat_id=message.chat.id, text="Пользователь заблокирован")
 
