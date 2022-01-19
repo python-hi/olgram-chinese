@@ -97,10 +97,12 @@ BotFather - это официальный бот Telegram, создающий д
 Например так:
 
 .. image:: ../images/ban2.png
+   :width: 300
 
 Со стороны пользователя этот диалог будет выглядеть так:
 
 .. image:: ../images/ban1.png
+   :width: 300
 
 .. note::
 
