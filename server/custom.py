@@ -86,7 +86,7 @@ async def message_handler(message: types.Message, *args, **kwargs):
 
             try:
                 await message.copy_to(chat_id)
-            except (exceptions.MessageError, exceptions.BotBlocked):
+            except (exceptions.MessageError, exceptions.Unauthorized):
                 await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
                                     parse_mode="HTML")
                 return
