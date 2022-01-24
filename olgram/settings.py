@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from abc import ABC
-import os
+import os, logging
 from olgram.utils.crypto import Cryptor
 from functools import lru_cache
 
@@ -83,6 +83,7 @@ class ServerSettings(AbstractSettings):
     def append_text(cls) -> str:
         return "\n\nЭтот бот создан с помощью @OlgramBot"
 
+    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 class BotSettings(AbstractSettings):
     @classmethod
