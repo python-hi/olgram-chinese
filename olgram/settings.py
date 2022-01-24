@@ -55,10 +55,6 @@ class ServerSettings(AbstractSettings):
         return int(cls._get_env("WEBHOOK_PORT"))
 
     @classmethod
-    def app_host(cls) -> str:
-        return "olgram"
-
-    @classmethod
     def app_port(cls) -> int:
         return 80
 
