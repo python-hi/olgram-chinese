@@ -217,7 +217,7 @@ async def send_bot_second_text_menu(bot: Bot, call: ty.Optional[types.CallbackQu
 
 
 async def send_bot_templates_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = None,
-                                    chat_id: ty.Optional[int] = None):
+                                  chat_id: ty.Optional[int] = None):
     if call:
         await call.answer()
     keyboard = types.InlineKeyboardMarkup(row_width=2)
