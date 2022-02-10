@@ -137,6 +137,7 @@ async def receive_left(message: types.Message):
 
 
 async def receive_inline(inline_query):
+    _logger.info("inline handler")
     bot = db_bot_instance.get()
     return await inline_handler(inline_query, bot)
 
