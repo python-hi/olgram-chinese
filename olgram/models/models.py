@@ -83,3 +83,9 @@ class BannedUser(Model):
 
     class Meta:
         table = "bot_banned_user"
+
+
+class DefaultAnswer(Model):
+    id = fields.BigIntField(pk=True)
+    bot = fields.ForeignKeyField("models.Bot", related_name="answers", on_delete=fields.relational.CASCADE)
+    text = fields.TextField()
