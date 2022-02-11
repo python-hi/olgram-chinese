@@ -90,8 +90,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
                 await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
                                     parse_mode="HTML")
                 return
-        else:
-            # в супер-чате кто-то пишет сообщение сам себе
+        elif super_chat_id > 0:
+            # в супер-чате кто-то пишет сообщение сам себе, только для личных сообщений
             await message.forward(super_chat_id)
             # И отправить пользователю специальный текст, если он указан
             if bot.second_text:
