@@ -2,7 +2,7 @@ from aiocache import cached
 import hashlib
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
 
-from olgram.models.models import Bot, DefaultAnswer
+from olgram.models.models import Bot
 import typing as ty
 
 
