@@ -5,7 +5,7 @@ from olgram.models.models import Bot, User, DefaultAnswer
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.callback_data import CallbackData
 from textwrap import dedent
-from olgram.utils.mix import edit_or_create, button_text_limit
+from olgram.utils.mix import edit_or_create, button_text_limit, wrap
 from olgram.commands import bot_actions
 
 import typing as ty
@@ -237,7 +237,13 @@ async def send_bot_templates_menu(bot: Bot, call: ty.Optional[types.CallbackQuer
     """)
 
     templates = await bot.answers
-    templates_text = "\n".join(f"{n}. {template.text}" for n, template in enumerate(templates))
+
+    total_text_len = sum(len(t.text) for t in templates) + len(text)  # примерная длина текста
+    max_len = 1000
+    if total_text_len > 4000:
+        max_len = 100
+
+    templates_text = "\n".join(f"{n}. {wrap(template.text, max_len)}" for n, template in enumerate(templates))
     if not templates_text:
         templates_text = "(нет шаблонов)"
     text = text.format(bot.name, templates_text)
@@ -283,8 +289,12 @@ async def template_received(message: types.Message, state: FSMContext):
         await templates[number].delete()
     else:
         # Add template
-        template = DefaultAnswer(text=message.text, bot=bot)
-        await template.save()
+        total_templates = len(await bot.answers)
+        if total_templates > 30:
+            await message.answer("У вашего бота уже слишком много щаблонов")
+        else:
+            template = DefaultAnswer(text=message.text, bot=bot)
+            await template.save()
 
     await send_bot_templates_menu(bot, chat_id=message.chat.id)
 
