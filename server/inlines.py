@@ -42,6 +42,7 @@ async def inline_handler(inline_query: InlineQuery, bot: Bot):
 
     all_phrases = await get_phrases(bot)
     phrases = [phrase for phrase in all_phrases if inline_query.query.lower() in phrase.lower()]
+    items = []
     for phrase in phrases:
 
         input_content = InputTextMessageContent(phrase)
