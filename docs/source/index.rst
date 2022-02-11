@@ -14,6 +14,7 @@
 
    about
    quick_start
+   templates
    developer
    additional
 
