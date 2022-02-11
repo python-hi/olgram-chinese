@@ -19,8 +19,9 @@ async def inline_handler(inline_query: InlineQuery, bot: Bot):
     #    return await inline_query.answer([], cache_time=1)  # forbidden
 
     all_phrases = await get_phrases(bot.id)
+    print(f"All phrases {all_phrases}")
     phrases = [phrase for phrase in all_phrases if inline_query.query.lower() in phrase.lower()]
-
+    print(f"phrases {phrases}")
     items = []
     for phrase in phrases:
 
