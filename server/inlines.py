@@ -7,19 +7,18 @@ from olgram.models.models import Bot
 import typing as ty
 
 
-@cached(ttl=1)
+@cached(ttl=60)
 async def get_phrases(bot: Bot) -> ty.List:
     objects = await bot.answers
     return [obj.text for obj in objects]
 
 
-@cached(ttl=1)
 async def check_chat_member(chat_id: int, user_id: int, bot: AioBot) -> bool:
     member = await bot.get_chat_member(chat_id, user_id)
     return member.is_chat_member()
 
 
-@cached(ttl=1)
+@cached(ttl=60)
 async def check_permissions(inline_query: InlineQuery, bot: Bot):
     user_id = inline_query.from_user.id
     super_chat_id = await bot.super_chat_id()
@@ -38,7 +37,7 @@ async def inline_handler(inline_query: InlineQuery, bot: Bot):
     # Check permissions at first
     allow = await check_permissions(inline_query, bot)
     if not allow:
-        return await inline_query.answer([], cache_time=1)  # forbidden
+        return await inline_query.answer([])  # forbidden
 
     all_phrases = await get_phrases(bot)
     phrases = [phrase for phrase in all_phrases if inline_query.query.lower() in phrase.lower()]
@@ -54,4 +53,4 @@ async def inline_handler(inline_query: InlineQuery, bot: Bot):
         )
         items.append(item)
 
-    await inline_query.answer(results=items, cache_time=1)
+    await inline_query.answer(results=items)
