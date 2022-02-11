@@ -283,6 +283,8 @@ async def template_received(message: types.Message, state: FSMContext):
         # Delete template
         number = int(message.text)
         templates = await bot.answers
+        if not templates:
+            await message.answer("У вас нет шаблонов, чтобы их удалять")
         if number < 0 or number >= len(templates):
             await message.answer(f"Неправильное число. Чтобы удалить шаблон, введите число от 0 до {len(templates)}")
             return
@@ -291,10 +293,14 @@ async def template_received(message: types.Message, state: FSMContext):
         # Add template
         total_templates = len(await bot.answers)
         if total_templates > 30:
-            await message.answer("У вашего бота уже слишком много щаблонов")
+            await message.answer("У вашего бота уже слишком много шаблонов")
         else:
-            template = DefaultAnswer(text=message.text, bot=bot)
-            await template.save()
+            answers = await bot.answers.filter(text=message.text)
+            if answers:
+                await message.answer("Такой текст уже есть в списке шаблонов")
+            else:
+                template = DefaultAnswer(text=message.text, bot=bot)
+                await template.save()
 
     await send_bot_templates_menu(bot, chat_id=message.chat.id)
 
