@@ -11,7 +11,7 @@ import logging
 import typing as ty
 from olgram.settings import ServerSettings
 from olgram.models.models import Bot, GroupChat, BannedUser
-
+from server.inlines import inline_handler
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.INFO)
@@ -90,8 +90,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
                 await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
                                     parse_mode="HTML")
                 return
-        else:
-            # в супер-чате кто-то пишет сообщение сам себе
+        elif super_chat_id > 0:
+            # в супер-чате кто-то пишет сообщение сам себе, только для личных сообщений
             await message.forward(super_chat_id)
             # И отправить пользователю специальный текст, если он указан
             if bot.second_text:
@@ -136,6 +136,12 @@ async def receive_left(message: types.Message):
             await bot.save()
 
 
+async def receive_inline(inline_query):
+    _logger.info("inline handler")
+    bot = db_bot_instance.get()
+    return await inline_handler(inline_query, bot)
+
+
 async def receive_migrate(message: types.Message):
     bot = db_bot_instance.get()
     from_id = message.chat.id
@@ -175,6 +181,7 @@ class CustomRequestHandler(WebhookRequestHandler):
         dp.register_message_handler(receive_left, content_types=[types.ContentType.LEFT_CHAT_MEMBER])
         dp.register_message_handler(receive_migrate, content_types=[types.ContentType.MIGRATE_TO_CHAT_ID])
         dp.register_message_handler(receive_group_create, content_types=[types.ContentType.GROUP_CHAT_CREATED])
+        dp.register_inline_handler(receive_inline)
 
         return dp
 

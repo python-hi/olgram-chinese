@@ -1,11 +1,11 @@
 from olgram.router import dp
 
 from aiogram import types, Bot as AioBot
-from olgram.models.models import Bot, User
+from olgram.models.models import Bot, User, DefaultAnswer
 from aiogram.dispatcher import FSMContext
 from aiogram.utils.callback_data import CallbackData
 from textwrap import dedent
-from olgram.utils.mix import edit_or_create, button_text_limit
+from olgram.utils.mix import edit_or_create, button_text_limit, wrap
 from olgram.commands import bot_actions
 
 import typing as ty
@@ -158,7 +158,7 @@ async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = 
     )
 
     text = dedent("""
-    Сейчас вы редактируете текст, который отправляется после того, как пользователь отправит вашему боту {0}
+    Сейчас вы редактируете текст, который отправляется после того, как пользователь отправит вашему боту @{0}
     команду /start
 
     Текущий текст:
@@ -189,6 +189,11 @@ async def send_bot_second_text_menu(bot: Bot, call: ty.Optional[types.CallbackQu
                                                                    chat=empty))
     )
     keyboard.insert(
+        types.InlineKeyboardButton(text="Шаблоны ответов...",
+                                   callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="templates",
+                                                                   chat=empty))
+    )
+    keyboard.insert(
         types.InlineKeyboardButton(text="Сбросить текст",
                                    callback_data=menu_callback.new(level=3, bot_id=bot.id,
                                                                    operation="reset_second_text", chat=empty))
@@ -205,6 +210,43 @@ async def send_bot_second_text_menu(bot: Bot, call: ty.Optional[types.CallbackQu
     Отправьте сообщение, чтобы изменить текст.
     """)
     text = text.format(bot.name, bot.second_text if bot.second_text else "(отключено)")
+    if call:
+        await edit_or_create(call, text, keyboard, parse_mode="HTML")
+    else:
+        await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard, parse_mode="HTML")
+
+
+async def send_bot_templates_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = None,
+                                  chat_id: ty.Optional[int] = None):
+    if call:
+        await call.answer()
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    keyboard.insert(
+        types.InlineKeyboardButton(text="<< Завершить редактирование",
+                                   callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
+    )
+
+    text = dedent("""
+    Сейчас вы редактируете шаблоны ответов для @{0}. Текущие шаблоны:
+
+    <pre>
+    {1}
+    </pre>
+    Отправьте какую-нибудь фразу (например: "Ваш заказ готов, ожидайте!"), чтобы добавить её в шаблон.
+    Чтобы удалить шаблон из списка, отправьте его номер в списке (например, 4)
+    """)
+
+    templates = await bot.answers
+
+    total_text_len = sum(len(t.text) for t in templates) + len(text)  # примерная длина текста
+    max_len = 1000
+    if total_text_len > 4000:
+        max_len = 100
+
+    templates_text = "\n".join(f"{n}. {wrap(template.text, max_len)}" for n, template in enumerate(templates))
+    if not templates_text:
+        templates_text = "(нет шаблонов)"
+    text = text.format(bot.name, templates_text)
     if call:
         await edit_or_create(call, text, keyboard, parse_mode="HTML")
     else:
@@ -231,6 +273,38 @@ async def second_text_received(message: types.Message, state: FSMContext):
     await send_bot_second_text_menu(bot, chat_id=message.chat.id)
 
 
+@dp.message_handler(state="wait_template", content_types="text", regexp="^[^/](.+)?")  # Not command
+async def template_received(message: types.Message, state: FSMContext):
+    async with state.proxy() as proxy:
+        bot_id = proxy.get("bot_id")
+    bot = await Bot.get_or_none(pk=bot_id)
+
+    if message.text.isdigit():
+        # Delete template
+        number = int(message.text)
+        templates = await bot.answers
+        if not templates:
+            await message.answer("У вас нет шаблонов, чтобы их удалять")
+        if number < 0 or number >= len(templates):
+            await message.answer(f"Неправильное число. Чтобы удалить шаблон, введите число от 0 до {len(templates)}")
+            return
+        await templates[number].delete()
+    else:
+        # Add template
+        total_templates = len(await bot.answers)
+        if total_templates > 30:
+            await message.answer("У вашего бота уже слишком много шаблонов")
+        else:
+            answers = await bot.answers.filter(text=message.text)
+            if answers:
+                await message.answer("Такой текст уже есть в списке шаблонов")
+            else:
+                template = DefaultAnswer(text=message.text, bot=bot)
+                await template.save()
+
+    await send_bot_templates_menu(bot, chat_id=message.chat.id)
+
+
 @dp.callback_query_handler(menu_callback.filter(), state="*")
 async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     level = callback_data.get("level")
@@ -245,6 +319,7 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
         return
 
     if level == "1":
+        await state.reset_state()
         return await send_bot_menu(bot, call)
 
     operation = callback_data.get("operation")
@@ -276,3 +351,8 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
         if operation == "reset_second_text":
             await bot_actions.reset_bot_second_text(bot, call)
             return await send_bot_second_text_menu(bot, call)
+        if operation == "templates":
+            await state.set_state("wait_template")
+            async with state.proxy() as proxy:
+                proxy["bot_id"] = bot.id
+            return await send_bot_templates_menu(bot, call)
