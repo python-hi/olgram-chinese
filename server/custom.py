@@ -30,6 +30,10 @@ def _message_unique_id(bot_id: int, message_id: int) -> str:
     return f"{bot_id}_{message_id}"
 
 
+def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
+    return f"thread_{bot_id}_{chat_id}"
+
+
 async def message_handler(message: types.Message, *args, **kwargs):
     _logger.info("message handler")
     bot = db_bot_instance.get()
@@ -40,6 +44,7 @@ async def message_handler(message: types.Message, *args, **kwargs):
                            text=bot.start_text + ServerSettings.append_text())
 
     super_chat_id = await bot.super_chat_id()
+    is_super_group = super_chat_id < 0
 
     if message.chat.id != super_chat_id:
         # Это обычный чат
@@ -50,8 +55,20 @@ async def message_handler(message: types.Message, *args, **kwargs):
             return SendMessage(chat_id=message.chat.id,
                                text="Вы заблокированы в этом боте")
 
-        # сообщение нужно переслать в супер-чат
-        new_message = await message.forward(super_chat_id)
+        if is_super_group:
+            thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
+            if thread_first_message:
+                # переслать в супер-чат, отвечая на предыдущее сообщение
+                new_message = await message.copy_to(super_chat_id, reply_to_message_id=thread_first_message)
+            else:
+                # переслать супер-чат
+                new_message = await message.forward(super_chat_id)
+                await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
+                                 pexpire=ServerSettings.thread_timeout_ms())
+        else:
+            # сообщение нужно переслать в супер-чат
+            new_message = await message.forward(super_chat_id)
+
         await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
                          pexpire=ServerSettings.redis_timeout_ms())
 

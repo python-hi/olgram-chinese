@@ -91,6 +91,11 @@ class ServerSettings(AbstractSettings):
     def redis_timeout_ms(cls) -> ty.Optional[int]:
         return int(timedelta(days=14).total_seconds() * 1000.0)
 
+    @classmethod
+    @lru_cache
+    def thread_timeout_ms(cls) -> int:
+        return int(timedelta(days=1).total_seconds() * 1000.0)
+
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "WARNING"))
 
