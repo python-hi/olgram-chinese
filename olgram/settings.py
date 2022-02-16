@@ -2,8 +2,10 @@ from dotenv import load_dotenv
 from abc import ABC
 import os
 import logging
-from olgram.utils.crypto import Cryptor
 from functools import lru_cache
+from datetime import timedelta
+import typing as ty
+from olgram.utils.crypto import Cryptor
 
 
 load_dotenv()
@@ -84,7 +86,13 @@ class ServerSettings(AbstractSettings):
     def append_text(cls) -> str:
         return "\n\nЭтот бот создан с помощью @OlgramBot"
 
-    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+    @classmethod
+    @lru_cache
+    def redis_timeout_ms(cls) -> ty.Optional[int]:
+        return int(timedelta(days=14).total_seconds() * 1000.0)
+
+
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "WARNING"))
 
 
 class BotSettings(AbstractSettings):

@@ -52,7 +52,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
 
         # сообщение нужно переслать в супер-чат
         new_message = await message.forward(super_chat_id)
-        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id)
+        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
+                         pexpire=ServerSettings.redis_timeout_ms())
 
         # И отправить пользователю специальный текст, если он указан
         if bot.second_text:
@@ -67,7 +68,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
                 chat_id = message.reply_to_message.forward_from_chat
                 if not chat_id:
                     return SendMessage(chat_id=message.chat.id,
-                                       text="<i>Невозможно переслать сообщение: автор не найден</i>",
+                                       text="<i>Невозможно переслать сообщение: автор не найден "
+                                            "(сообщение слишком старое?)</i>",
                                        parse_mode="HTML")
             chat_id = int(chat_id)
 
