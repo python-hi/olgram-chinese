@@ -7,6 +7,7 @@ from contextvars import ContextVar
 from aiohttp.web_exceptions import HTTPNotFound
 from aioredis.commands import create_redis_pool
 from aioredis import Redis
+from tortoise.expressions import F
 import logging
 import typing as ty
 from olgram.settings import ServerSettings
@@ -30,6 +31,10 @@ def _message_unique_id(bot_id: int, message_id: int) -> str:
     return f"{bot_id}_{message_id}"
 
 
+def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
+    return f"thread_{bot_id}_{chat_id}"
+
+
 async def message_handler(message: types.Message, *args, **kwargs):
     _logger.info("message handler")
     bot = db_bot_instance.get()
@@ -40,6 +45,7 @@ async def message_handler(message: types.Message, *args, **kwargs):
                            text=bot.start_text + ServerSettings.append_text())
 
     super_chat_id = await bot.super_chat_id()
+    is_super_group = super_chat_id < 0
 
     if message.chat.id != super_chat_id:
         # Это обычный чат
@@ -50,9 +56,25 @@ async def message_handler(message: types.Message, *args, **kwargs):
             return SendMessage(chat_id=message.chat.id,
                                text="Вы заблокированы в этом боте")
 
-        # сообщение нужно переслать в супер-чат
-        new_message = await message.forward(super_chat_id)
-        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id)
+        bot.incoming_messages_count = F("incoming_messages_count") + 1
+        await bot.save(update_fields=["incoming_messages_count"])
+
+        # Пересылаем сообщение в супер-чат
+        if is_super_group:
+            thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
+            if thread_first_message:
+                # переслать в супер-чат, отвечая на предыдущее сообщение
+                new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
+            else:
+                # переслать супер-чат
+                new_message = await message.forward(super_chat_id)
+                await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
+                                 pexpire=ServerSettings.thread_timeout_ms())
+        else:  # личные сообщения не поддерживают потоки сообщений: простой forward
+            new_message = await message.forward(super_chat_id)
+
+        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
+                         pexpire=ServerSettings.redis_timeout_ms())
 
         # И отправить пользователю специальный текст, если он указан
         if bot.second_text:
@@ -67,7 +89,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
                 chat_id = message.reply_to_message.forward_from_chat
                 if not chat_id:
                     return SendMessage(chat_id=message.chat.id,
-                                       text="<i>Невозможно переслать сообщение: автор не найден</i>",
+                                       text="<i>Невозможно переслать сообщение: автор не найден "
+                                            "(сообщение слишком старое?)</i>",
                                        parse_mode="HTML")
             chat_id = int(chat_id)
 
@@ -90,6 +113,9 @@ async def message_handler(message: types.Message, *args, **kwargs):
                 await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
                                     parse_mode="HTML")
                 return
+
+            bot.outgoing_messages_count = F("outgoing_messages_count") + 1
+            await bot.save(update_fields=["outgoing_messages_count"])
         elif super_chat_id > 0:
             # в супер-чате кто-то пишет сообщение сам себе, только для личных сообщений
             await message.forward(super_chat_id)

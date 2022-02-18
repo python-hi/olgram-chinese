@@ -108,6 +108,11 @@ async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
                                                                    chat=empty))
     )
     keyboard.insert(
+        types.InlineKeyboardButton(text="Статистика",
+                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="stat",
+                                                                   chat=empty))
+    )
+    keyboard.insert(
         types.InlineKeyboardButton(text="<< Назад",
                                    callback_data=menu_callback.new(level=0, bot_id=empty, operation=empty, chat=empty))
     )
@@ -168,6 +173,30 @@ async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = 
     Отправьте сообщение, чтобы изменить текст.
     """)
     text = text.format(bot.name, bot.start_text)
+    if call:
+        await edit_or_create(call, text, keyboard, parse_mode="HTML")
+    else:
+        await AioBot.get_current().send_message(chat_id, text, reply_markup=keyboard, parse_mode="HTML")
+
+
+async def send_bot_statistic_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = None,
+                                  chat_id: ty.Optional[int] = None):
+    if call:
+        await call.answer()
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    keyboard.insert(
+        types.InlineKeyboardButton(text="<< Назад",
+                                   callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty, chat=empty))
+    )
+
+    text = dedent(f"""
+    Статистика по боту @{bot.name}
+
+    Входящих сообщений: <b>{bot.incoming_messages_count}</b>
+    Ответов: <b>{bot.outgoing_messages_count}</b>
+    Шаблоны ответов: <b>{len(await bot.answers)}</b>
+    Забанено пользователей: <b>{len(await bot.banned_users)}</b>
+    """)
     if call:
         await edit_or_create(call, text, keyboard, parse_mode="HTML")
     else:
@@ -329,6 +358,8 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
             return await send_chats_menu(bot, call)
         if operation == "delete":
             return await send_bot_delete_menu(bot, call)
+        if operation == "stat":
+            return await send_bot_statistic_menu(bot, call)
         if operation == "text":
             await state.set_state("wait_start_text")
             async with state.proxy() as proxy:

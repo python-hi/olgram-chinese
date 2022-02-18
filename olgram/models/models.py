@@ -38,6 +38,9 @@ class Bot(Model):
                                         on_delete=fields.relational.CASCADE,
                                         null=True)
 
+    incoming_messages_count = fields.BigIntField(default=0)
+    outgoing_messages_count = fields.BigIntField(default=0)
+
     def decrypted_token(self):
         cryptor = DatabaseSettings.cryptor()
         return cryptor.decrypt(self.token)
