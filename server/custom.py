@@ -64,7 +64,12 @@ async def message_handler(message: types.Message, *args, **kwargs):
             thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
             if thread_first_message:
                 # переслать в супер-чат, отвечая на предыдущее сообщение
-                new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
+                try:
+                    new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
+                except exceptions.BadRequest:
+                    new_message = await message.forward(super_chat_id)
+                    await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
+                                     pexpire=ServerSettings.thread_timeout_ms())
             else:
                 # переслать супер-чат
                 new_message = await message.forward(super_chat_id)
