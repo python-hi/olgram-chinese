@@ -29,7 +29,7 @@ async def info(message: types.Message, state: FSMContext):
     outgoing_messages = sum([bot.outgoing_messages_count for bot in bots])
 
     await message.answer(f"Количество ботов: {bots_count}\n"
-                         f"Количество пользователей: {user_count}\n"
+                         f"Количество пользователей (у конструктора): {user_count}\n"
                          f"Шаблонов ответов: {templates_count}\n"
                          f"Входящих сообщений у всех ботов: {income_messages}\n"
                          f"Исходящих сообщений у всех ботов: {outgoing_messages}\n")
