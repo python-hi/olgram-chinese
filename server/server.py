@@ -33,7 +33,8 @@ async def register_token(bot: Bot) -> bool:
     if ServerSettings.use_custom_cert():
         certificate = open(ServerSettings.public_path(), 'rb')
 
-    res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate, drop_pending_updates=True)
+    res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate, drop_pending_updates=True,
+                                  max_connections=10)
     await a_bot.session.close()
     del a_bot
     return res
