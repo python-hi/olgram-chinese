@@ -193,7 +193,7 @@ async def send_bot_statistic_menu(bot: Bot, call: ty.Optional[types.CallbackQuer
     Статистика по боту @{bot.name}
 
     Входящих сообщений: <b>{bot.incoming_messages_count}</b>
-    Ответов: <b>{bot.outgoing_messages_count}</b>
+    Ответных сообщений: <b>{bot.outgoing_messages_count}</b>
     Шаблоны ответов: <b>{len(await bot.answers)}</b>
     Забанено пользователей: <b>{len(await bot.banned_users)}</b>
     """)
