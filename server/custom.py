@@ -7,6 +7,7 @@ from contextvars import ContextVar
 from aiohttp.web_exceptions import HTTPNotFound
 from aioredis.commands import create_redis_pool
 from aioredis import Redis
+from tortoise.expressions import F
 import logging
 import typing as ty
 from olgram.settings import ServerSettings
@@ -54,6 +55,9 @@ async def message_handler(message: types.Message, *args, **kwargs):
         if banned:
             return SendMessage(chat_id=message.chat.id,
                                text="Вы заблокированы в этом боте")
+
+        bot.incoming_messages_count = F("incoming_messages_count") + 1
+        await bot.save(update_fields=["incoming_messages_count"])
 
         # Пересылаем сообщение в супер-чат
         if is_super_group:
@@ -109,6 +113,9 @@ async def message_handler(message: types.Message, *args, **kwargs):
                 await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
                                     parse_mode="HTML")
                 return
+
+            bot.outgoing_messages_count = F("outgoing_messages_count") + 1
+            await bot.save(update_fields=["outgoing_messages_count"])
         elif super_chat_id > 0:
             # в супер-чате кто-то пишет сообщение сам себе, только для личных сообщений
             await message.forward(super_chat_id)
