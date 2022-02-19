@@ -116,6 +116,11 @@ async def send_bot_menu(bot: Bot, call: types.CallbackQuery):
         types.InlineKeyboardButton(text="<< Назад",
                                    callback_data=menu_callback.new(level=0, bot_id=empty, operation=empty, chat=empty))
     )
+    keyboard.insert(
+        types.InlineKeyboardButton(text="Опции",
+                                   callback_data=menu_callback.new(level=2, bot_id=bot.id, operation="settings",
+                                                                   chat=empty))
+    )
 
     await edit_or_create(call, dedent(f"""
     Управление ботом @{bot.name}.
@@ -141,6 +146,27 @@ async def send_bot_delete_menu(bot: Bot, call: types.CallbackQuery):
     await edit_or_create(call, dedent(f"""
     Вы уверены, что хотите удалить бота @{bot.name}?
     """), reply_markup=keyboard)
+
+
+async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
+    await call.answer()
+    keyboard = types.InlineKeyboardMarkup(row_width=1)
+    keyboard.insert(
+        types.InlineKeyboardButton(text="Потоки сообщений",
+                                   callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="threads",
+                                                                   chat=empty))
+    )
+    keyboard.insert(
+        types.InlineKeyboardButton(text="<< Назад",
+                                   callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty,
+                                                                   chat=empty))
+    )
+
+    thread_turn = "включены" if bot.enable_threads else "выключены"
+    text = dedent(f"""
+    <a href="https://olgram.readthedocs.io/ru/latest/threads.html">Потоки сообщений</a>: <b>{thread_turn}</b>
+    """)
+    await edit_or_create(call, text, reply_markup=keyboard, parse_mode="HTML")
 
 
 async def send_bot_text_menu(bot: Bot, call: ty.Optional[types.CallbackQuery] = None, chat_id: ty.Optional[int] = None):
@@ -360,6 +386,8 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
             return await send_bot_delete_menu(bot, call)
         if operation == "stat":
             return await send_bot_statistic_menu(bot, call)
+        if operation == "settings":
+            return await send_bot_settings_menu(bot, call)
         if operation == "text":
             await state.set_state("wait_start_text")
             async with state.proxy() as proxy:
@@ -371,6 +399,9 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
             return await bot_actions.delete_bot(bot, call)
         if operation == "chat":
             return await bot_actions.select_chat(bot, call, callback_data.get("chat"))
+        if operation == "threads":
+            await bot_actions.threads(bot, call)
+            return await send_bot_settings_menu(bot, call)
         if operation == "reset_text":
             await bot_actions.reset_bot_text(bot, call)
             return await send_bot_text_menu(bot, call)

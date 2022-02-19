@@ -57,7 +57,7 @@ async def message_handler(message: types.Message, *args, **kwargs):
                                text="Вы заблокированы в этом боте")
 
         # Пересылаем сообщение в супер-чат
-        if is_super_group:
+        if is_super_group and bot.enable_threads:
             thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
             if thread_first_message:
                 # переслать в супер-чат, отвечая на предыдущее сообщение

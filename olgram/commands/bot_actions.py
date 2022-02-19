@@ -69,3 +69,8 @@ async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
     bot.group_chat = chat_obj
     await bot.save()
     await call.answer(f"Выбран чат {chat_obj.name}")
+
+
+async def threads(bot: Bot, call: types.CallbackQuery):
+    bot.enable_threads = not bot.enable_threads
+    await bot.save(update_fields=["enable_threads"])
