@@ -41,18 +41,17 @@ async def initialization():
 
 
 def main():
-    """
-    Classic polling
-    """
-    parser = argparse.ArgumentParser("Olgram server")
-    parser.add_argument("--noserver", help="Не запускать сервер обратной связи, только сам Olgram (режим для "
-                                           "разработки)", action="store_true")
+    parser = argparse.ArgumentParser("Olgram bot and feedback server")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--noserver", help="Не запускать сервер обратной связи, только сам Olgram", action="store_true")
+    group.add_argument("--onlyserver", help="Запустить только сервер обратной связи, без Olgram")
     args = parser.parse_args()
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(initialization())
 
-    loop.create_task(dp.start_polling())
+    if not args.onlyserver:
+        loop.create_task(dp.start_polling())
     if not args.noserver:
         loop.create_task(server_main().start())
 

@@ -15,6 +15,7 @@
    about
    quick_start
    templates
+   threads
    developer
    additional
 
