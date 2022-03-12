@@ -44,7 +44,7 @@ def main():
     parser = argparse.ArgumentParser("Olgram bot and feedback server")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--noserver", help="Не запускать сервер обратной связи, только сам Olgram", action="store_true")
-    group.add_argument("--onlyserver", help="Запустить только сервер обратной связи, без Olgram")
+    group.add_argument("--onlyserver", help="Запустить только сервер обратной связи, без Olgram", action="store_true")
     args = parser.parse_args()
 
     loop = asyncio.get_event_loop()
