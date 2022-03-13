@@ -4,6 +4,7 @@
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+import socket
 from olgram.models import models
 
 from olgram.router import dp
@@ -28,8 +29,11 @@ async def info(message: types.Message, state: FSMContext):
     income_messages = sum([bot.incoming_messages_count for bot in bots])
     outgoing_messages = sum([bot.outgoing_messages_count for bot in bots])
 
+    hostname = socket.gethostname()
+
     await message.answer(f"Количество ботов: {bots_count}\n"
                          f"Количество пользователей (у конструктора): {user_count}\n"
                          f"Шаблонов ответов: {templates_count}\n"
                          f"Входящих сообщений у всех ботов: {income_messages}\n"
-                         f"Исходящих сообщений у всех ботов: {outgoing_messages}\n")
+                         f"Исходящих сообщений у всех ботов: {outgoing_messages}\n"
+                         f"Хост: {hostname}")
