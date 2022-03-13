@@ -14,6 +14,8 @@ from olgram.settings import ServerSettings
 from olgram.models.models import Bot, GroupChat, BannedUser
 from server.inlines import inline_handler
 
+import socket
+
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.INFO)
 
@@ -43,6 +45,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
         # На команду start нужно ответить, не пересылая сообщение никуда
         return SendMessage(chat_id=message.chat.id,
                            text=bot.start_text + ServerSettings.append_text())
+    if message.text and message.text == "/gethostplz":
+        return SendMessage(chat_id=message.chat.id, text=str(socket.gethostname()))
 
     super_chat_id = await bot.super_chat_id()
     is_super_group = super_chat_id < 0
