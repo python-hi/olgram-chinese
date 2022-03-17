@@ -157,14 +157,21 @@ async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
                                                                    chat=empty))
     )
     keyboard.insert(
+        types.InlineKeyboardButton(text="Дополнительная информация",
+                                   callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="additional_info",
+                                                                   chat=empty))
+    )
+    keyboard.insert(
         types.InlineKeyboardButton(text="<< Назад",
                                    callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty,
                                                                    chat=empty))
     )
 
     thread_turn = "включены" if bot.enable_threads else "выключены"
+    info_turn = "включена" if bot.enable_additional_info else "выключена"
     text = dedent(f"""
-    <a href="https://olgram.readthedocs.io/ru/latest/threads.html">Потоки сообщений</a>: <b>{thread_turn}</b>
+    <a href="https://olgram.readthedocs.io/ru/latest/threads.html">Потоки сообщений</a>: <b>{thread_turn}</b>\n
+    <a href="https://olgram.readthedocs.io/ru/latest/user_info.html">Дополнительная информация</a>: <b>{info_turn}</b>\n
     """)
     await edit_or_create(call, text, reply_markup=keyboard, parse_mode="HTML")
 
@@ -401,6 +408,9 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
             return await bot_actions.select_chat(bot, call, callback_data.get("chat"))
         if operation == "threads":
             await bot_actions.threads(bot, call)
+            return await send_bot_settings_menu(bot, call)
+        if operation == "additional_info":
+            await bot_actions.additional_info(bot, call)
             return await send_bot_settings_menu(bot, call)
         if operation == "reset_text":
             await bot_actions.reset_bot_text(bot, call)

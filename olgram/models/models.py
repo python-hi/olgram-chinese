@@ -42,6 +42,7 @@ class Bot(Model):
     outgoing_messages_count = fields.BigIntField(default=0)
 
     enable_threads = fields.BooleanField(default=False)
+    enable_additional_info = fields.BooleanField(default=False)
 
     def decrypted_token(self):
         cryptor = DatabaseSettings.cryptor()

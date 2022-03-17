@@ -74,3 +74,8 @@ async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
 async def threads(bot: Bot, call: types.CallbackQuery):
     bot.enable_threads = not bot.enable_threads
     await bot.save(update_fields=["enable_threads"])
+
+
+async def additional_info(bot: Bot, call: types.CallbackQuery):
+    bot.enable_additional_info = not bot.enable_additional_info
+    await bot.save(update_fields=["enable_additional_info"])

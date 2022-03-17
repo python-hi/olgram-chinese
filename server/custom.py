@@ -56,6 +56,8 @@ async def message_handler(message: types.Message, *args, **kwargs):
             return SendMessage(chat_id=message.chat.id,
                                text="Вы заблокированы в этом боте")
 
+        in_thread = False
+
         # Пересылаем сообщение в супер-чат
         if is_super_group and bot.enable_threads:
             thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
@@ -63,6 +65,7 @@ async def message_handler(message: types.Message, *args, **kwargs):
                 # переслать в супер-чат, отвечая на предыдущее сообщение
                 try:
                     new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
+                    in_thread = True
                 except exceptions.BadRequest:
                     new_message = await message.forward(super_chat_id)
                     await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
@@ -77,6 +80,15 @@ async def message_handler(message: types.Message, *args, **kwargs):
 
         await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
                          pexpire=ServerSettings.redis_timeout_ms())
+
+        if bot.enable_additional_info and not in_thread:
+            user_info = "От пользователя: "
+            if message.from_user.full_name:
+                user_info += message.from_user.full_name
+            if message.from_user.username:
+                user_info += " | @" + message.from_user.username
+            user_info += f" | #{message.from_user.id}"
+            await message.bot.send_message(super_chat_id, text=user_info, reply_to_message_id=new_message.message_id)
 
         bot.incoming_messages_count = F("incoming_messages_count") + 1
         await bot.save(update_fields=["incoming_messages_count"])
