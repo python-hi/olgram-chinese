@@ -35,6 +35,108 @@ def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
     return f"thread_{bot_id}_{chat_id}"
 
 
+async def send_user_message(message: types.Message, super_chat_id: int, bot):
+    """Переслать сообщение от пользователя, добавлять к нему user info при необходимости"""
+    if bot.enable_additional_info:
+        user_info = "От пользователя: "
+        if message.from_user.full_name:
+            user_info += message.from_user.full_name
+        if message.from_user.username:
+            user_info += " | @" + message.from_user.username
+        user_info += f" | #{message.from_user.id}"
+        new_message = await message.bot.send_message(super_chat_id, text=user_info)
+        await message.copy_to(super_chat_id, reply_to_message_id=new_message.message_id)
+        return new_message
+    else:
+        return await message.forward(super_chat_id)
+
+
+async def handle_user_message(message: types.Message, super_chat_id: int, bot):
+    """Обычный пользователь прислал сообщение в бот, нужно переслать его операторам"""
+    is_super_group = super_chat_id < 0
+
+    # Проверить, не забанен ли пользователь
+    banned = await bot.banned_users.filter(telegram_id=message.chat.id)
+    if banned:
+        return SendMessage(chat_id=message.chat.id,
+                           text="Вы заблокированы в этом боте")
+
+    # Пересылаем сообщение в супер-чат
+    if is_super_group and bot.enable_threads:
+        thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
+        if thread_first_message:
+            # переслать в супер-чат, отвечая на предыдущее сообщение
+            try:
+                new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
+            except exceptions.BadRequest:
+                new_message = await send_user_message(message, super_chat_id, bot)
+                await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
+                                 pexpire=ServerSettings.thread_timeout_ms())
+        else:
+            # переслать супер-чат
+
+            new_message = await send_user_message(message, super_chat_id, bot)
+            await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
+                             pexpire=ServerSettings.thread_timeout_ms())
+    else:  # личные сообщения не поддерживают потоки сообщений: простой forward
+        new_message = await send_user_message(message, super_chat_id, bot)
+
+    await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
+                     pexpire=ServerSettings.redis_timeout_ms())
+
+    bot.incoming_messages_count = F("incoming_messages_count") + 1
+    await bot.save(update_fields=["incoming_messages_count"])
+
+    # И отправить пользователю специальный текст, если он указан
+    if bot.second_text:
+        return SendMessage(chat_id=message.chat.id, text=bot.second_text)
+
+
+async def handle_operator_message(message: types.Message, super_chat_id: int, bot):
+    """Оператор написал что-то, нужно переслать сообщение обратно пользователю, или забанить его и т.д."""
+    if message.reply_to_message:
+        # В супер-чате кто-то ответил на сообщение пользователя, нужно переслать тому пользователю
+        chat_id = await _redis.get(_message_unique_id(bot.pk, message.reply_to_message.message_id))
+        if not chat_id:
+            chat_id = message.reply_to_message.forward_from_chat
+            if not chat_id:
+                return SendMessage(chat_id=message.chat.id,
+                                   text="<i>Невозможно переслать сообщение: автор не найден "
+                                        "(сообщение слишком старое?)</i>",
+                                   parse_mode="HTML")
+        chat_id = int(chat_id)
+
+        if message.text == "/ban":
+            user, _ = await BannedUser.get_or_create(telegram_id=chat_id, bot=bot)
+            await user.save()
+            return SendMessage(chat_id=message.chat.id, text="Пользователь заблокирован")
+
+        if message.text == "/unban":
+            banned_user = await bot.banned_users.filter(telegram_id=chat_id).first()
+            if not banned_user:
+                return SendMessage(chat_id=message.chat.id, text="Пользователь не был забанен")
+            else:
+                await banned_user.delete()
+                return SendMessage(chat_id=message.chat.id, text="Пользователь разбанен")
+
+        try:
+            await message.copy_to(chat_id)
+        except (exceptions.MessageError, exceptions.Unauthorized):
+            await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
+                                parse_mode="HTML")
+            return
+
+        bot.outgoing_messages_count = F("outgoing_messages_count") + 1
+        await bot.save(update_fields=["outgoing_messages_count"])
+
+    elif super_chat_id > 0:
+        # в супер-чате кто-то пишет сообщение сам себе, только для личных сообщений
+        await message.forward(super_chat_id)
+        # И отправить пользователю специальный текст, если он указан
+        if bot.second_text:
+            return SendMessage(chat_id=message.chat.id, text=bot.second_text)
+
+
 async def message_handler(message: types.Message, *args, **kwargs):
     _logger.info("message handler")
     bot = db_bot_instance.get()
@@ -45,101 +147,13 @@ async def message_handler(message: types.Message, *args, **kwargs):
                            text=bot.start_text + ServerSettings.append_text())
 
     super_chat_id = await bot.super_chat_id()
-    is_super_group = super_chat_id < 0
 
     if message.chat.id != super_chat_id:
         # Это обычный чат
-
-        # Проверить, не забанен ли пользователь
-        banned = await bot.banned_users.filter(telegram_id=message.chat.id)
-        if banned:
-            return SendMessage(chat_id=message.chat.id,
-                               text="Вы заблокированы в этом боте")
-
-        in_thread = False
-
-        # Пересылаем сообщение в супер-чат
-        if is_super_group and bot.enable_threads:
-            thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
-            if thread_first_message:
-                # переслать в супер-чат, отвечая на предыдущее сообщение
-                try:
-                    new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
-                    in_thread = True
-                except exceptions.BadRequest:
-                    new_message = await message.forward(super_chat_id)
-                    await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
-                                     pexpire=ServerSettings.thread_timeout_ms())
-            else:
-                # переслать супер-чат
-                new_message = await message.forward(super_chat_id)
-                await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
-                                 pexpire=ServerSettings.thread_timeout_ms())
-        else:  # личные сообщения не поддерживают потоки сообщений: простой forward
-            new_message = await message.forward(super_chat_id)
-
-        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
-                         pexpire=ServerSettings.redis_timeout_ms())
-
-        if bot.enable_additional_info and not in_thread:
-            user_info = "От пользователя: "
-            if message.from_user.full_name:
-                user_info += message.from_user.full_name
-            if message.from_user.username:
-                user_info += " | @" + message.from_user.username
-            user_info += f" | #{message.from_user.id}"
-            await message.bot.send_message(super_chat_id, text=user_info, reply_to_message_id=new_message.message_id)
-
-        bot.incoming_messages_count = F("incoming_messages_count") + 1
-        await bot.save(update_fields=["incoming_messages_count"])
-
-        # И отправить пользователю специальный текст, если он указан
-        if bot.second_text:
-            return SendMessage(chat_id=message.chat.id, text=bot.second_text)
+        return await handle_user_message(message, super_chat_id, bot)
     else:
         # Это супер-чат
-
-        if message.reply_to_message:
-            # В супер-чате кто-то ответил на сообщение пользователя, нужно переслать тому пользователю
-            chat_id = await _redis.get(_message_unique_id(bot.pk, message.reply_to_message.message_id))
-            if not chat_id:
-                chat_id = message.reply_to_message.forward_from_chat
-                if not chat_id:
-                    return SendMessage(chat_id=message.chat.id,
-                                       text="<i>Невозможно переслать сообщение: автор не найден "
-                                            "(сообщение слишком старое?)</i>",
-                                       parse_mode="HTML")
-            chat_id = int(chat_id)
-
-            if message.text == "/ban":
-                user, _ = await BannedUser.get_or_create(telegram_id=chat_id, bot=bot)
-                await user.save()
-                return SendMessage(chat_id=message.chat.id, text="Пользователь заблокирован")
-
-            if message.text == "/unban":
-                banned_user = await bot.banned_users.filter(telegram_id=chat_id).first()
-                if not banned_user:
-                    return SendMessage(chat_id=message.chat.id, text="Пользователь не был забанен")
-                else:
-                    await banned_user.delete()
-                    return SendMessage(chat_id=message.chat.id, text="Пользователь разбанен")
-
-            try:
-                await message.copy_to(chat_id)
-            except (exceptions.MessageError, exceptions.Unauthorized):
-                await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
-                                    parse_mode="HTML")
-                return
-
-            bot.outgoing_messages_count = F("outgoing_messages_count") + 1
-            await bot.save(update_fields=["outgoing_messages_count"])
-
-        elif super_chat_id > 0:
-            # в супер-чате кто-то пишет сообщение сам себе, только для личных сообщений
-            await message.forward(super_chat_id)
-            # И отправить пользователю специальный текст, если он указан
-            if bot.second_text:
-                return SendMessage(chat_id=message.chat.id, text=bot.second_text)
+        return await handle_operator_message(message, super_chat_id, bot)
 
 
 async def receive_invite(message: types.Message):
