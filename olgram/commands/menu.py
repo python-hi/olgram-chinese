@@ -170,8 +170,8 @@ async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
     thread_turn = "включены" if bot.enable_threads else "выключены"
     info_turn = "включена" if bot.enable_additional_info else "выключена"
     text = dedent(f"""
-    <a href="https://olgram.readthedocs.io/ru/latest/threads.html">Потоки сообщений</a>: <b>{thread_turn}</b>
-    <a href="https://olgram.readthedocs.io/ru/latest/user_info.html">Дополнительная информация</a>: <b>{info_turn}</b>
+    <a href="https://olgram.readthedocs.io/ru/latest/options.html#threads">Потоки сообщений</a>: <b>{thread_turn}</b>
+    <a href="https://olgram.readthedocs.io/ru/latest/options.html#user_info">Данные пользователя</a>: <b>{info_turn}</b>
     """)
     await edit_or_create(call, text, reply_markup=keyboard, parse_mode="HTML")
 

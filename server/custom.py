@@ -38,9 +38,8 @@ def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
 async def send_user_message(message: types.Message, super_chat_id: int, bot):
     """Переслать сообщение от пользователя, добавлять к нему user info при необходимости"""
     if bot.enable_additional_info:
-        user_info = "От пользователя: "
-        if message.from_user.full_name:
-            user_info += message.from_user.full_name
+        user_info = "Сообщение от пользователя "
+        user_info += message.from_user.full_name
         if message.from_user.username:
             user_info += " | @" + message.from_user.username
         user_info += f" | #{message.from_user.id}"
