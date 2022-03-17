@@ -168,7 +168,7 @@ async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
     )
 
     thread_turn = "включены" if bot.enable_threads else "выключены"
-    info_turn = "включена" if bot.enable_additional_info else "выключена"
+    info_turn = "включены" if bot.enable_additional_info else "выключены"
     text = dedent(f"""
     <a href="https://olgram.readthedocs.io/ru/latest/options.html#threads">Потоки сообщений</a>: <b>{thread_turn}</b>
     <a href="https://olgram.readthedocs.io/ru/latest/options.html#user-info">Данные пользователя</a>: <b>{info_turn}</b>
