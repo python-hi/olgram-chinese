@@ -43,10 +43,11 @@ def _on_security_policy(message: types.Message, bot):
            "не делают массовых рассылок.\n\n"
     if bot.enable_additional_info:
         text += "При отправке сообщения (кроме команд /start и /security_policy) оператор <b>видит</b> ваши имя " \
-                "пользователя, @username и идентификатор пользователя. "
+                "пользователя, @username и идентификатор пользователя в силу настроек, которые оператор указал при " \
+                "создании бота."
     else:
         text += "В зависимости от ваших настроек конфиденциальности Telegram, оператор может видеть ваш username, " \
-                "имя пользователя и другую информацию"
+                "имя пользователя и другую информацию."
 
     return SendMessage(chat_id=message.chat.id,
                        text=text,
@@ -92,18 +93,19 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
             # переслать в супер-чат, отвечая на предыдущее сообщение
             try:
                 new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
+                await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
+                                 pexpire=ServerSettings.redis_timeout_ms())
             except exceptions.BadRequest:
                 new_message = await send_user_message(message, super_chat_id, bot)
                 await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
                                  pexpire=ServerSettings.thread_timeout_ms())
         else:
             # переслать супер-чат
-
             new_message = await send_user_message(message, super_chat_id, bot)
             await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
                              pexpire=ServerSettings.thread_timeout_ms())
     else:  # личные сообщения не поддерживают потоки сообщений: простой forward
-        new_message = await send_user_message(message, super_chat_id, bot)
+        await send_user_message(message, super_chat_id, bot)
 
     bot.incoming_messages_count = F("incoming_messages_count") + 1
     await bot.save(update_fields=["incoming_messages_count"])
