@@ -1,4 +1,5 @@
 from aiogram import Bot as AioBot
+from aiogram.types import BotCommand
 from olgram.models.models import Bot
 from aiohttp import web
 from asyncio import get_event_loop
@@ -35,6 +36,11 @@ async def register_token(bot: Bot) -> bool:
 
     res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate, drop_pending_updates=True,
                                   max_connections=10)
+    await a_bot.set_my_commands([
+        BotCommand("/start", "(Пере)запустить бота"),
+        BotCommand("/security_policy", "Политика конфиденциальности")
+    ])
+
     await a_bot.session.close()
     del a_bot
     return res

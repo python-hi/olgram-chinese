@@ -35,6 +35,24 @@ def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
     return f"thread_{bot_id}_{chat_id}"
 
 
+async def _on_security_policy(message: types.Message, bot):
+    text = "<b>Политика конфиденциальности</b>\n\n" \
+           "Этот бот не хранит ваши сообщения, имя пользователя и @username. При отправке сообщения (кроме команд " \
+           "/start и /security_policy) ваш идентификатор пользователя записывается в кеш на некоторое время и потом " \
+           "удаляется из кеша. Этот идентификатор используется только для общения с оператором; боты Olgram " \
+           "не делают массовых рассылок.\n\n"
+    if bot.enable_additional_info:
+        text += "При отправке сообщения (кроме команд /start и /security_policy) оператор <b>видит</b> ваши имя " \
+                "пользователя, @username и идентификатор пользователя. "
+    else:
+        text += "В зависимости от ваших настроек конфиденциальности Telegram, оператор может видеть ваш username, " \
+                "имя пользователя и другую информацию"
+
+    return SendMessage(chat_id=message.chat.id,
+                       text=text,
+                       parse_mode="HTML")
+
+
 async def send_user_message(message: types.Message, super_chat_id: int, bot):
     """Переслать сообщение от пользователя, добавлять к нему user info при необходимости"""
     if bot.enable_additional_info:
@@ -148,6 +166,10 @@ async def message_handler(message: types.Message, *args, **kwargs):
         # На команду start нужно ответить, не пересылая сообщение никуда
         return SendMessage(chat_id=message.chat.id,
                            text=bot.start_text + ServerSettings.append_text())
+
+    if message.text and message.text == "/security_policy":
+        # На команду security_policy нужно ответить, не пересылая сообщение никуда
+        return _on_security_policy(message, bot)
 
     super_chat_id = await bot.super_chat_id()
 
