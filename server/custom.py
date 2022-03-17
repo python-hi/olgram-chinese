@@ -35,7 +35,7 @@ def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
     return f"thread_{bot_id}_{chat_id}"
 
 
-async def _on_security_policy(message: types.Message, bot):
+def _on_security_policy(message: types.Message, bot):
     text = "<b>Политика конфиденциальности</b>\n\n" \
            "Этот бот не хранит ваши сообщения, имя пользователя и @username. При отправке сообщения (кроме команд " \
            "/start и /security_policy) ваш идентификатор пользователя записывается в кеш на некоторое время и потом " \
