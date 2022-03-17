@@ -45,10 +45,17 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
             user_info += " | @" + message.from_user.username
         user_info += f" | #{message.from_user.id}"
         new_message = await message.bot.send_message(super_chat_id, text=user_info)
-        await message.copy_to(super_chat_id, reply_to_message_id=new_message.message_id)
+        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
+                         pexpire=ServerSettings.redis_timeout_ms())
+        new_message_2 = await message.copy_to(super_chat_id, reply_to_message_id=new_message.message_id)
+        await _redis.set(_message_unique_id(bot.pk, new_message_2.message_id), message.chat.id,
+                         pexpire=ServerSettings.redis_timeout_ms())
         return new_message
     else:
-        return await message.forward(super_chat_id)
+        new_message = await message.forward(super_chat_id)
+        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
+                         pexpire=ServerSettings.redis_timeout_ms())
+        return new_message
 
 
 async def handle_user_message(message: types.Message, super_chat_id: int, bot):
@@ -80,9 +87,6 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
                              pexpire=ServerSettings.thread_timeout_ms())
     else:  # личные сообщения не поддерживают потоки сообщений: простой forward
         new_message = await send_user_message(message, super_chat_id, bot)
-
-    await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
-                     pexpire=ServerSettings.redis_timeout_ms())
 
     bot.incoming_messages_count = F("incoming_messages_count") + 1
     await bot.save(update_fields=["incoming_messages_count"])
