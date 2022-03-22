@@ -562,4 +562,4 @@ msgstr "隐私政策"
 
 
 msgid "\n\nЭтот бот создан с помощью @OlgramBot"
-msgstr " "
+msgstr "\n\n "
