@@ -236,9 +236,7 @@ msgstr ""
 "\n"
 "    机器人管理@{0}。\n"
 "\n"
-"    如果你有任何关于机器人配置的问题，请参阅我们的帮助/help或给我们发电子邮"
-"件\n"
-"    @civsocit_feedback_bot\n"
+"    如果你有任何关于机器人配置的问题，请参阅我们的帮助/help\n"
 "    "
 
 #: olgram/commands/menu.py:138
@@ -467,7 +465,6 @@ msgid ""
 msgstr ""
 "\n"
 "    请阅读我们网站上的说明 https://olgram.readthedocs.io\n"
-"    技术支持。@civsocit_feedback_bot\n"
 "    版本{0}\n"
 "    "
 
