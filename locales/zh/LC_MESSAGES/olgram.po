@@ -562,4 +562,4 @@ msgstr "隐私政策"
 
 
 msgid "\n\nЭтот бот создан с помощью @OlgramBot"
-msgstr "\n\n这个机器人是基于Olgram Telegram Bot项目的。"
+msgstr " "
