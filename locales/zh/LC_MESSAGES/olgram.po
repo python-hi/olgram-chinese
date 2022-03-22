@@ -23,7 +23,7 @@ msgstr "移除机器人"
 
 #: olgram/commands/bot_actions.py:37 olgram/commands/bot_actions.py:49
 msgid "Текст сброшен"
-msgstr "倾倒的文本"
+msgstr "重置文本"
 
 #: olgram/commands/bot_actions.py:63
 msgid "Выбран личный чат"
@@ -31,7 +31,7 @@ msgstr "选择了私聊"
 
 #: olgram/commands/bot_actions.py:68
 msgid "Нельзя привязать бота к этому чату"
-msgstr "你不能将机器人链接到这个聊天室"
+msgstr "你不能将机器人链接到这个群聊"
 
 #: olgram/commands/bot_actions.py:72
 msgid "Выбран чат {0}"
@@ -59,7 +59,7 @@ msgstr ""
 "\n"
 "    要连接机器人，你需要遵循三个步骤。\n"
 "\n"
-"    1. 转到机器人@BotFather，按START键并发送/newbot\n"
+"    1. 转到机器人@BotFather，按/START键并发送/newbot\n"
 "    2. 输入机器人的名字，然后输入机器人的用户名。\n"
 "    3. 一旦创建了机器人，就向这个机器人转发一条回复信息，或者复制并发送机器人"
 "的令牌。\n"
@@ -110,7 +110,7 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        这样的机器人已经在数据库中出现了\n"
+"        这个机器人已经在数据库中出现了\n"
 "        "
 
 #: olgram/commands/bots.py:114
@@ -131,7 +131,7 @@ msgstr "用户的数量（在构造器处）。{0}\n"
 
 #: olgram/commands/info.py:34
 msgid "Шаблонов ответов: {0}\n"
-msgstr "答案模板。{0}\n"
+msgstr "回复模板。{0}\n"
 
 #: olgram/commands/info.py:35
 msgid "Входящих сообщений у всех ботов: {0}\n"
@@ -184,9 +184,9 @@ msgstr ""
 "\n"
 "        这个机器人没有被添加到聊天记录中，所以所有的信息都会在机器人中找到"
 "你。\n"
-"        要连接聊天--将机器人@{0}添加到聊天中，再次打开此菜单并选择添加的聊"
-"天。\n"
-"        如果你的机器人在添加到Olgram之前是在群组聊天中，请将其从聊天室中删"
+"        要连接群聊--将机器人@{0}添加到群聊中，再次打开此菜单并选择添加的群"
+"聊。\n"
+"        如果你的机器人在添加到Olgram之前是在群组中，请将其从群聊中删"
 "除，然后添加到群组中。\n"
 "        再次。\n"
 "        "
@@ -199,17 +199,17 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"        在本节中，您可以将@{0}机器人绑定到一个聊天室。\n"
-"        选择机器人将转发消息的聊天室。\n"
+"        在本节中，您可以将@{0}机器人绑定到一个群聊中。\n"
+"        选择机器人将转发消息的群聊。\n"
 "        "
 
 #: olgram/commands/menu.py:97
 msgid "Текст"
-msgstr "文本"
+msgstr "自动回复"
 
 #: olgram/commands/menu.py:102
 msgid "Чат"
-msgstr "聊天"
+msgstr "群聊"
 
 #: olgram/commands/menu.py:107
 msgid "Удалить бот"
@@ -292,7 +292,7 @@ msgstr "<< 完成编辑"
 
 #: olgram/commands/menu.py:189
 msgid "Автоответчик"
-msgstr "答录机"
+msgstr "自动回复"
 
 #: olgram/commands/menu.py:194 olgram/commands/menu.py:261
 msgid "Сбросить текст"
@@ -314,12 +314,12 @@ msgid ""
 msgstr ""
 "\n"
 "    你现在正在编辑用户向你的机器人发送@{0}之后的文本。\n"
-"    /启动命令\n"
+"    /start\n"
 "\n"
 "    目前的文本。\n"
 "    <pre>\n"
 "    {1}\n"
-"    </pre>。\n"
+"    </pre>\n"
 "    发送消息，改变文本。\n"
 "    "
 
@@ -339,7 +339,7 @@ msgstr ""
 "\n"
 "    收到的信息: <b>{1}</b>\n"
 "    回复信息: <b>{2}</b>\n"
-"    答案模板: <b>{3}</b>\n"
+"    回复模板: <b>{3}</b>\n"
 "    被禁止的用户: <b>{4}</b>\n"
 "    "
 
@@ -349,7 +349,7 @@ msgstr ""
 
 #: olgram/commands/menu.py:256
 msgid "Шаблоны ответов..."
-msgstr "回答模板..."
+msgstr "回复模板..."
 
 #: olgram/commands/menu.py:266
 msgid ""
@@ -395,7 +395,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    你现在正在编辑@{0}的答案模板。目前的模板。\n"
+"    你现在正在编辑@{0}的回复模板。目前的模板。\n"
 "\n"
 "    <pre>\n"
 "    {1}\n"
@@ -449,7 +449,7 @@ msgstr ""
 "\n"
 "    使用这些命令来控制这个机器人:\n"
 "\n"
-"    /addbot - 捆绑\n"
+"    /addbot - 绑定机器人\n"
 "    /mybots - 机器人控制\n"
 "\n"
 "    /help - 帮助\n"
@@ -546,7 +546,7 @@ msgstr "该用户没有被禁止"
 
 #: server/custom.py:144
 msgid "Пользователь разбанен"
-msgstr "解禁的用户"
+msgstr "解禁用户"
 
 #: server/custom.py:149
 msgid "<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>"
