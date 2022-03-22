@@ -4,9 +4,14 @@ from os.path import dirname
 
 locales_dir = dirname(__file__)
 
+
+def dummy_translator(x: str) -> str:
+    return x
+
+
 lang = BotSettings.language()
 if lang == "ru":
-    _ = lambda x: x
+    _ = dummy_translator
 else:
     t = gettext.translation("olgram", localedir=locales_dir, languages=[lang])
     _ = t.gettext
