@@ -109,6 +109,14 @@ class BotSettings(AbstractSettings):
         """
         return cls._get_env("BOT_TOKEN")
 
+    @classmethod
+    def language(cls) -> str:
+        """
+        Язык
+        """
+        lang = cls._get_env("O_LANG", allow_none=True)
+        return lang.lower() if lang else "ru"
+
 
 class DatabaseSettings(AbstractSettings):
     @classmethod

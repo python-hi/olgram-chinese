@@ -12,6 +12,7 @@ import logging
 import typing as ty
 from olgram.settings import ServerSettings
 from olgram.models.models import Bot, GroupChat, BannedUser
+from locales.locale import _
 from server.inlines import inline_handler
 
 _logger = logging.getLogger(__name__)
@@ -36,18 +37,18 @@ def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
 
 
 def _on_security_policy(message: types.Message, bot):
-    text = "<b>Политика конфиденциальности</b>\n\n" \
-           "Этот бот не хранит ваши сообщения, имя пользователя и @username. При отправке сообщения (кроме команд " \
-           "/start и /security_policy) ваш идентификатор пользователя записывается в кеш на некоторое время и потом " \
-           "удаляется из кеша. Этот идентификатор используется только для общения с оператором; боты Olgram " \
-           "не делают массовых рассылок.\n\n"
+    text = _("<b>Политика конфиденциальности</b>\n\n" \
+             "Этот бот не хранит ваши сообщения, имя пользователя и @username. При отправке сообщения (кроме команд " \
+             "/start и /security_policy) ваш идентификатор пользователя записывается в кеш на некоторое время и потом " \
+             "удаляется из кеша. Этот идентификатор используется только для общения с оператором; боты Olgram " \
+             "не делают массовых рассылок.\n\n")
     if bot.enable_additional_info:
-        text += "При отправке сообщения (кроме команд /start и /security_policy) оператор <b>видит</b> ваши имя " \
-                "пользователя, @username и идентификатор пользователя в силу настроек, которые оператор указал при " \
-                "создании бота."
+        text += _("При отправке сообщения (кроме команд /start и /security_policy) оператор <b>видит</b> ваши имя " \
+                  "пользователя, @username и идентификатор пользователя в силу настроек, которые оператор указал при " \
+                  "создании бота.")
     else:
-        text += "В зависимости от ваших настроек конфиденциальности Telegram, оператор может видеть ваш username, " \
-                "имя пользователя и другую информацию."
+        text += _("В зависимости от ваших настроек конфиденциальности Telegram, оператор может видеть ваш username, " \
+                "имя пользователя и другую информацию.")
 
     return SendMessage(chat_id=message.chat.id,
                        text=text,
@@ -57,7 +58,7 @@ def _on_security_policy(message: types.Message, bot):
 async def send_user_message(message: types.Message, super_chat_id: int, bot):
     """Переслать сообщение от пользователя, добавлять к нему user info при необходимости"""
     if bot.enable_additional_info:
-        user_info = "Сообщение от пользователя "
+        user_info = _("Сообщение от пользователя ")
         user_info += message.from_user.full_name
         if message.from_user.username:
             user_info += " | @" + message.from_user.username
@@ -84,7 +85,7 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
     banned = await bot.banned_users.filter(telegram_id=message.chat.id)
     if banned:
         return SendMessage(chat_id=message.chat.id,
-                           text="Вы заблокированы в этом боте")
+                           text=_("Вы заблокированы в этом боте"))
 
     # Пересылаем сообщение в супер-чат
     if is_super_group and bot.enable_threads:
@@ -124,28 +125,28 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
             chat_id = message.reply_to_message.forward_from_chat
             if not chat_id:
                 return SendMessage(chat_id=message.chat.id,
-                                   text="<i>Невозможно переслать сообщение: автор не найден "
-                                        "(сообщение слишком старое?)</i>",
+                                   text=_("<i>Невозможно переслать сообщение: автор не найден (сообщение слишком "
+                                          "старое?)</i>"),
                                    parse_mode="HTML")
         chat_id = int(chat_id)
 
         if message.text == "/ban":
-            user, _ = await BannedUser.get_or_create(telegram_id=chat_id, bot=bot)
+            user, create = await BannedUser.get_or_create(telegram_id=chat_id, bot=bot)
             await user.save()
-            return SendMessage(chat_id=message.chat.id, text="Пользователь заблокирован")
+            return SendMessage(chat_id=message.chat.id, text=_("Пользователь заблокирован"))
 
         if message.text == "/unban":
             banned_user = await bot.banned_users.filter(telegram_id=chat_id).first()
             if not banned_user:
-                return SendMessage(chat_id=message.chat.id, text="Пользователь не был забанен")
+                return SendMessage(chat_id=message.chat.id, text=_("Пользователь не был забанен"))
             else:
                 await banned_user.delete()
-                return SendMessage(chat_id=message.chat.id, text="Пользователь разбанен")
+                return SendMessage(chat_id=message.chat.id, text=_("Пользователь разбанен"))
 
         try:
             await message.copy_to(chat_id)
         except (exceptions.MessageError, exceptions.Unauthorized):
-            await message.reply("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>",
+            await message.reply(_("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>"),
                                 parse_mode="HTML")
             return
 

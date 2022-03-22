@@ -5,6 +5,7 @@ from aiohttp import web
 from asyncio import get_event_loop
 import ssl
 from olgram.settings import ServerSettings
+from locales.locale import _
 from .custom import CustomRequestHandler
 
 import logging
@@ -37,8 +38,8 @@ async def register_token(bot: Bot) -> bool:
     res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate, drop_pending_updates=True,
                                   max_connections=10)
     await a_bot.set_my_commands([
-        BotCommand("/start", "(Пере)запустить бота"),
-        BotCommand("/security_policy", "Политика конфиденциальности")
+        BotCommand("/start", _("(Пере)запустить бота")),
+        BotCommand("/security_policy", _("Политика конфиденциальности"))
     ])
 
     await a_bot.session.close()

@@ -3,6 +3,7 @@ from tortoise import fields
 from uuid import uuid4
 from textwrap import dedent
 from olgram.settings import DatabaseSettings
+from locales.locale import _
 
 
 class MetaInfo(Model):
@@ -26,10 +27,10 @@ class Bot(Model):
     owner = fields.ForeignKeyField("models.User", related_name="bots")
     name = fields.CharField(max_length=33)
     code = fields.UUIDField(default=uuid4, index=True)
-    start_text = fields.TextField(default=dedent("""
+    start_text = fields.TextField(default=dedent(_("""
     Здравствуйте!
     Напишите ваш вопрос и мы ответим вам в ближайшее время.
-    """))
+    """)))
     second_text = fields.TextField(null=True, default=None)
 
     group_chats = fields.ManyToManyField("models.GroupChat", related_name="bots", on_delete=fields.relational.CASCADE,

@@ -12,6 +12,7 @@ import olgram.commands.start  # noqa: F401
 import olgram.commands.menu  # noqa: F401
 import olgram.commands.bot_actions  # noqa: F401
 import olgram.commands.info  # noqa: F401
+from locales.locale import _
 
 from server.server import main as server_main
 
@@ -26,10 +27,10 @@ async def init_olgram():
     from aiogram.types import BotCommand
     await bot.set_my_commands(
         [
-            BotCommand("start", "Запустить бота"),
-            BotCommand("addbot", "Добавить бот"),
-            BotCommand("mybots", "Управление ботами"),
-            BotCommand("help", "Справка")
+            BotCommand("start", _("Запустить бота")),
+            BotCommand("addbot", _("Добавить бот")),
+            BotCommand("mybots", _("Управление ботами")),
+            BotCommand("help", _("Справка"))
         ]
     )
 
