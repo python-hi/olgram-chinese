@@ -119,6 +119,10 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
 async def handle_operator_message(message: types.Message, super_chat_id: int, bot):
     """Оператор написал что-то, нужно переслать сообщение обратно пользователю, или забанить его и т.д."""
     if message.reply_to_message:
+
+        if not message.reply_to_message.from_user.is_bot:
+            return  # нас интересуют только ответы на сообщения бота
+
         # В супер-чате кто-то ответил на сообщение пользователя, нужно переслать тому пользователю
         chat_id = await _redis.get(_message_unique_id(bot.pk, message.reply_to_message.message_id))
         if not chat_id:
