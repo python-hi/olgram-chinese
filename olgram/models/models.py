@@ -68,6 +68,10 @@ class User(Model):
     id = fields.IntField(pk=True)
     telegram_id = fields.BigIntField(index=True, unique=True)
 
+    async def is_promo(self):
+        await self.fetch_related("promo")
+        return bool(self.promo)
+
     class Meta:
         table = 'user'
 
@@ -96,3 +100,12 @@ class DefaultAnswer(Model):
     id = fields.BigIntField(pk=True)
     bot = fields.ForeignKeyField("models.Bot", related_name="answers", on_delete=fields.relational.CASCADE)
     text = fields.TextField()
+
+
+class Promo(Model):
+    id = fields.BigIntField(pk=True)
+    code = fields.UUIDField(default=uuid4, index=True)
+    date = fields.DatetimeField(auto_now_add=True)
+
+    owner = fields.ForeignKeyField("models.User", related_name="promo", on_delete=fields.relational.SET_NULL,
+                                   null=True, default=None)
