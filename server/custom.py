@@ -120,6 +120,10 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
     """Оператор написал что-то, нужно переслать сообщение обратно пользователю, или забанить его и т.д."""
     if message.reply_to_message:
 
+        if message.text == "/host":
+            from socket import gethostname
+            return SendMessage(chat_id=message.chat.id, text=gethostname())
+
         if not message.reply_to_message.from_user.is_bot:
             return  # нас интересуют только ответы на сообщения бота
 
