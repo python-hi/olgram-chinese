@@ -62,8 +62,8 @@ class Bot(Model):
         return (await self.owner).telegram_id
 
     async def is_promo(self):
-        owner = await self.fetch_related("owner")
-        return await owner.is_promo()
+        await self.fetch_related("owner")
+        return await self.owner.is_promo()
 
     class Meta:
         table = 'bot'
