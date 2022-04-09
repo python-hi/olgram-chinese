@@ -162,6 +162,14 @@ async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
                                    callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="additional_info",
                                                                    chat=empty))
     )
+    is_promo = await bot.is_promo()
+    if is_promo:
+        keyboard.insert(
+            types.InlineKeyboardButton(text=_("Olgram подпись"),
+                                       callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="olgram_text",
+                                                                       chat=empty))
+        )
+
     keyboard.insert(
         types.InlineKeyboardButton(text=_("<< Назад"),
                                    callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty,
@@ -174,6 +182,11 @@ async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
     <a href="https://olgram.readthedocs.io/ru/latest/options.html#threads">Потоки сообщений</a>: <b>{0}</b>
     <a href="https://olgram.readthedocs.io/ru/latest/options.html#user-info">Данные пользователя</a>: <b>{1}</b>
     """)).format(thread_turn, info_turn)
+
+    if is_promo:
+        olgram_turn = _("включена") if bot.enable_olgram_text else _("выключена")
+        text += _("Olgram подпись: {0}").format(olgram_turn)
+
     await edit_or_create(call, text, reply_markup=keyboard, parse_mode="HTML")
 
 

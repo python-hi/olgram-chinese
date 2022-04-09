@@ -44,6 +44,7 @@ class Bot(Model):
 
     enable_threads = fields.BooleanField(default=False)
     enable_additional_info = fields.BooleanField(default=False)
+    enable_olgram_text = fields.BooleanField(default=True)
 
     def decrypted_token(self):
         cryptor = DatabaseSettings.cryptor()
@@ -59,6 +60,10 @@ class Bot(Model):
         if group_chat:
             return group_chat.chat_id
         return (await self.owner).telegram_id
+
+    async def is_promo(self):
+        owner = await self.fetch_related("owner")
+        return await owner.is_promo()
 
     class Meta:
         table = 'bot'

@@ -80,3 +80,9 @@ async def threads(bot: Bot, call: types.CallbackQuery):
 async def additional_info(bot: Bot, call: types.CallbackQuery):
     bot.enable_additional_info = not bot.enable_additional_info
     await bot.save(update_fields=["enable_additional_info"])
+
+
+async def olgram_text(bot: Bot, call: types.CallbackQuery):
+    if await bot.is_promo():
+        bot.enable_olgram_text = not bot.enable_olgram_text
+        await bot.save(update_fields=["enable_olgram_text"])
