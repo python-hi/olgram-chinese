@@ -185,7 +185,7 @@ async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
 
     if is_promo:
         olgram_turn = _("включена") if bot.enable_olgram_text else _("выключена")
-        text += _("Olgram подпись: {0}").format(olgram_turn)
+        text += _("Olgram подпись: <b>{0}</b>").format(olgram_turn)
 
     await edit_or_create(call, text, reply_markup=keyboard, parse_mode="HTML")
 
@@ -427,6 +427,9 @@ async def callback(call: types.CallbackQuery, callback_data: dict, state: FSMCon
             return await send_bot_settings_menu(bot, call)
         if operation == "additional_info":
             await bot_actions.additional_info(bot, call)
+            return await send_bot_settings_menu(bot, call)
+        if operation == "olgram_text":
+            await bot_actions.olgram_text(bot, call)
             return await send_bot_settings_menu(bot, call)
         if operation == "reset_text":
             await bot_actions.reset_bot_text(bot, call)

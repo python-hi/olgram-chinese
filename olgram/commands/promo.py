@@ -29,6 +29,30 @@ async def new_promo(message: types.Message, state: FSMContext):
     await promo.save()
 
 
+@dp.message_handler(commands=["delpromo"], state="*")
+async def del_promo(message: types.Message, state: FSMContext):
+    """
+    Команда /delpromo
+    """
+
+    if message.chat.id != OlgramSettings.supervisor_id():
+        await message.answer(_("Недостаточно прав"))
+        return
+
+    try:
+        uuid = UUID(message.get_args().strip())
+        promo = await models.Promo.get_or_none(code=uuid)
+    except ValueError:
+        return await message.answer(_("Неправильный токен"))
+
+    if not promo:
+        return await message.answer(_("Такого кода не существует"))
+
+    await promo.delete()
+
+    await message.answer(_("Промокод отозван"))
+
+
 @dp.message_handler(commands=["setpromo"], state="*")
 async def set_promo(message: types.Message, state: FSMContext):
     """
