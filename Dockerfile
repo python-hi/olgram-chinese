@@ -19,6 +19,7 @@ RUN poetry install --no-interaction --no-ansi --no-dev
 COPY . /app
 
 RUN msgfmt locales/zh/LC_MESSAGES/olgram.po -o locales/zh/LC_MESSAGES/olgram.mo --use-fuzzy
+RUN msgfmt locales/uk/LC_MESSAGES/olgram.po -o locales/uk/LC_MESSAGES/olgram.mo --use-fuzzy
 
 EXPOSE 80
 
