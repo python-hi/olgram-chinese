@@ -21,4 +21,5 @@ translators = {
     "ru": dummy_translator,
     "uk": gettext.translation("olgram", localedir=locales_dir, languages=["uk"]).gettext,
     "zh": gettext.translation("olgram", localedir=locales_dir, languages=["zh"]).gettext,
+    "en": gettext.translation("olgram", localedir=locales_dir, languages=["en"]).gettext,
 }

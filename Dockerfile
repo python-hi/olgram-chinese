@@ -20,6 +20,7 @@ COPY . /app
 
 RUN msgfmt locales/zh/LC_MESSAGES/olgram.po -o locales/zh/LC_MESSAGES/olgram.mo --use-fuzzy
 RUN msgfmt locales/uk/LC_MESSAGES/olgram.po -o locales/uk/LC_MESSAGES/olgram.mo --use-fuzzy
+RUN msgfmt locales/en/LC_MESSAGES/olgram.po -o locales/en/LC_MESSAGES/olgram.mo --use-fuzzy
 
 EXPOSE 80
 
