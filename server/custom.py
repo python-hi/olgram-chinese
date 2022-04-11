@@ -12,7 +12,7 @@ import logging
 import typing as ty
 from olgram.settings import ServerSettings
 from olgram.models.models import Bot, GroupChat, BannedUser
-from locales.locale import _
+from locales.locale import _, translators
 from server.inlines import inline_handler
 
 _logger = logging.getLogger(__name__)
@@ -21,6 +21,10 @@ _logger.setLevel(logging.INFO)
 db_bot_instance: ContextVar[Bot] = ContextVar('db_bot_instance')
 
 _redis: ty.Optional[Redis] = None
+
+
+def _get_translator(message: types.Message) -> ty.Callable:
+    return translators.get(message.from_user.locale, _)
 
 
 async def init_redis():
@@ -37,6 +41,7 @@ def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
 
 
 def _on_security_policy(message: types.Message, bot):
+    _ = _get_translator(message)
     text = _("<b>Политика конфиденциальности</b>\n\n"
              "Этот бот не хранит ваши сообщения, имя пользователя и @username. При отправке сообщения (кроме команд "
              "/start и /security_policy) ваш идентификатор пользователя записывается в кеш на некоторое время и потом "
@@ -79,6 +84,7 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
 
 async def handle_user_message(message: types.Message, super_chat_id: int, bot):
     """Обычный пользователь прислал сообщение в бот, нужно переслать его операторам"""
+    _ = _get_translator(message)
     is_super_group = super_chat_id < 0
 
     # Проверить, не забанен ли пользователь
@@ -118,6 +124,8 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
 
 async def handle_operator_message(message: types.Message, super_chat_id: int, bot):
     """Оператор написал что-то, нужно переслать сообщение обратно пользователю, или забанить его и т.д."""
+    _ = _get_translator(message)
+
     if message.reply_to_message:
 
         if not message.reply_to_message.from_user.is_bot:
@@ -167,6 +175,7 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
 
 async def message_handler(message: types.Message, *args, **kwargs):
     _logger.info("message handler")
+    _ = _get_translator(message)
     bot = db_bot_instance.get()
 
     if message.text and message.text == "/start":
