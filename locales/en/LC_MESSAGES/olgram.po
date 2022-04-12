@@ -630,3 +630,12 @@ msgstr "(Re)launch the bot"
 #: server/server.py:42
 msgid "Политика конфиденциальности"
 msgstr "Privacy Policy"
+
+msgid ""
+"\n"
+"\n"
+"Этот бот создан с помощью @OlgramBot"
+msgstr ""
+"\n"
+"\n"
+"This bot was created using @OlgramBot"
