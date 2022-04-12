@@ -11,4 +11,5 @@ ad.md
 release.env
 test.py
 backup
-
+*.mo
+*.pot
