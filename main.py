@@ -13,6 +13,7 @@ import olgram.commands.menu  # noqa: F401
 import olgram.commands.bot_actions  # noqa: F401
 import olgram.commands.info  # noqa: F401
 import olgram.commands.promo  # noqa: F401
+import olgram.commands.admin  # noqa: F401
 from locales.locale import _
 
 from server.server import main as server_main
