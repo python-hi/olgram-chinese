@@ -50,7 +50,7 @@ async def on_notify_text(message: types.Message, state: FSMContext):
         await message.answer(_("Поддерживается только текст"), reply_markup=types.ReplyKeyboardRemove())
         return
 
-    if message.text.lower().strip() == _("пропустить"):
+    if message.text == _("Пропустить"):
         await state.reset_state(with_data=True)
         await message.answer(_("Отменено"), reply_markup=types.ReplyKeyboardRemove())
         return
@@ -66,7 +66,7 @@ async def on_notify_text(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state="wait_owner_notify_message_confirm")
 async def on_notify_message_confirm(message: types.Message, state: FSMContext):
-    if not message.text or message.text.lower().strip() != _("Отправить"):
+    if not message.text or (message.text != _("Отправить")):
         await state.reset_state(with_data=True)
         await message.answer(_("Отменено"), reply_markup=types.ReplyKeyboardRemove())
         return
