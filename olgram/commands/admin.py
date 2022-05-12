@@ -27,7 +27,7 @@ async def notify(message: types.Message, state: FSMContext):
         await message.answer(_("Нужно указать имя бота"))
         return
 
-    bot = await models.Bot.filter(name=bot_name).first()
+    bot = await models.Bot.filter(name=bot_name.removeprefix("@")).first()
 
     if not bot:
         await message.answer(_("Такого бота нет в системе"))
@@ -76,6 +76,6 @@ async def on_notify_message_confirm(message: types.Message, state: FSMContext):
     text = data["notify_text"]
     chat_id = await bot.super_chat_id()
 
+    await state.reset_state(with_data=True)
     await message.bot.send_message(chat_id, text=text)
-
-    await message.answer(_("Отправлено"))
+    await message.answer(_("Отправлено"), reply_markup=types.ReplyKeyboardRemove())
