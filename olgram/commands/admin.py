@@ -74,7 +74,7 @@ async def on_notify_message_confirm(message: types.Message, state: FSMContext):
     data = await state.get_data()
     bot = await models.Bot.get(pk=data["notify_to_bot"])
     text = data["notify_text"]
-    chat_id = await bot.super_chat_id()
+    chat_id = (await bot.owner).telegram_id
 
     await state.reset_state(with_data=True)
     await message.bot.send_message(chat_id, text=text)
