@@ -89,7 +89,7 @@ class ServerSettings(AbstractSettings):
     @classmethod
     @lru_cache
     def redis_timeout_ms(cls) -> ty.Optional[int]:
-        return int(timedelta(days=20).total_seconds() * 1000.0)
+        return int(timedelta(days=180).total_seconds() * 1000.0)
 
     @classmethod
     @lru_cache
