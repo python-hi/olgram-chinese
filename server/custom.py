@@ -70,12 +70,15 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
         if message.from_user.username:
             user_info += " | @" + message.from_user.username
         user_info += f" | #{message.from_user.id}"
-        new_message = await message.bot.send_message(super_chat_id, text=user_info)
-        await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
-                         pexpire=ServerSettings.redis_timeout_ms())
-        new_message_2 = await message.copy_to(super_chat_id, reply_to_message_id=new_message.message_id)
-        await _redis.set(_message_unique_id(bot.pk, new_message_2.message_id), message.chat.id,
-                         pexpire=ServerSettings.redis_timeout_ms())
+        if message.content_type == types.ContentType.TEXT:  # Добавлять информацию в конец текста
+            new_message = await message.bot.send_message(super_chat_id, message.text + "\n\n" + user_info)
+        else:  # Информационное сообщение + оригинальное сообщение
+            new_message = await message.bot.send_message(super_chat_id, text=user_info)
+            await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
+                             pexpire=ServerSettings.redis_timeout_ms())
+            new_message_2 = await message.copy_to(super_chat_id, reply_to_message_id=new_message.message_id)
+            await _redis.set(_message_unique_id(bot.pk, new_message_2.message_id), message.chat.id,
+                             pexpire=ServerSettings.redis_timeout_ms())
         return new_message
     else:
         new_message = await message.forward(super_chat_id)
