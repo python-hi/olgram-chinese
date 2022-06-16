@@ -32,6 +32,14 @@ class OlgramSettings(AbstractSettings):
         return 10
 
     @classmethod
+    def max_bots_per_user_promo(cls) -> int:
+        """
+        Максимальное количество ботов у одного пользователя с промо-доступом
+        :return: int
+        """
+        return 25
+
+    @classmethod
     def version(cls):
         return "0.3.3"
 

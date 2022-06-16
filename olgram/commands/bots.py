@@ -37,8 +37,12 @@ async def add_bot(message: types.Message, state: FSMContext):
     """
     Команда /addbot (добавить бота)
     """
+    user = await User.get_or_none(telegram_id=message.from_user.id)
+    max_bot_count = OlgramSettings.max_bots_per_user()
+    if user and await user.is_promo():
+        max_bot_count = OlgramSettings.max_bots_per_user_promo()
     bot_count = await Bot.filter(owner__telegram_id=message.from_user.id).count()
-    if bot_count >= OlgramSettings.max_bots_per_user():
+    if bot_count >= max_bot_count:
         await message.answer(_("У вас уже слишком много ботов. Удалите какой-нибудь свой бот из Olgram"
                                "(/mybots -> (Выбрать бота) -> Удалить бот)"))
         return
