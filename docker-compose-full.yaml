@@ -13,7 +13,7 @@ services:
     labels:
       - 'com.centurylinklabs.watchtower.enable="false"'
   redis:
-    image: 'bitnami/redis:latest'
+    image: 'bitnami/redis:6.2.7'
     restart: unless-stopped
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
