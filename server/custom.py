@@ -70,9 +70,11 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
         if message.from_user.username:
             user_info += " | @" + message.from_user.username
         user_info += f" | #{message.from_user.id}"
-        if message.content_type == types.ContentType.TEXT:  # Добавлять информацию в конец текста
+
+        # Добавлять информацию в конец текста
+        if message.content_type == types.ContentType.TEXT and len(message.text) + len(user_info) < 4093:
             new_message = await message.bot.send_message(super_chat_id, message.text + "\n\n" + user_info)
-        else:  # Информационное сообщение + оригинальное сообщение
+        else:  # Не добавлять информацию в конец текста, информация отдельным сообщением
             new_message = await message.bot.send_message(super_chat_id, text=user_info)
             await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
                              pexpire=ServerSettings.redis_timeout_ms())
