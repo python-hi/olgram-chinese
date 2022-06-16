@@ -72,7 +72,7 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
         user_info += f" | #{message.from_user.id}"
 
         # Добавлять информацию в конец текста
-        if message.content_type == types.ContentType.TEXT and len(message.text) + len(user_info) < 4093:
+        if isinstance(message.content_type, types.ContentType.TEXT) and len(message.text) + len(user_info) < 4093:
             new_message = await message.bot.send_message(super_chat_id, message.text + "\n\n" + user_info)
         else:  # Не добавлять информацию в конец текста, информация отдельным сообщением
             new_message = await message.bot.send_message(super_chat_id, text=user_info)
