@@ -206,6 +206,10 @@ async def message_handler(message: types.Message, *args, **kwargs):
         return await handle_operator_message(message, super_chat_id, bot)
 
 
+async def edited_message_handler(message: types.Message, *args, **kwargs):
+    return await message_handler(message, *args, **kwargs, is_edited=True)
+
+
 async def receive_invite(message: types.Message):
     bot = db_bot_instance.get()
     for member in message.new_chat_members:
@@ -286,7 +290,7 @@ class CustomRequestHandler(WebhookRequestHandler):
                               types.ContentType.VIDEO,
                               types.ContentType.VOICE]
         dp.register_message_handler(message_handler, content_types=supported_messages)
-        dp.register_edited_message_handler(message_handler, content_types=supported_messages)
+        dp.register_edited_message_handler(edited_message_handler, content_types=supported_messages)
 
         dp.register_message_handler(receive_invite, content_types=[types.ContentType.NEW_CHAT_MEMBERS])
         dp.register_message_handler(receive_left, content_types=[types.ContentType.LEFT_CHAT_MEMBER])
