@@ -276,15 +276,18 @@ class CustomRequestHandler(WebhookRequestHandler):
         db_bot_instance.set(bot)
         dp = Dispatcher(AioBot(bot.decrypted_token()))
 
-        dp.register_message_handler(message_handler, content_types=[types.ContentType.TEXT,
-                                                                    types.ContentType.CONTACT,
-                                                                    types.ContentType.ANIMATION,
-                                                                    types.ContentType.AUDIO,
-                                                                    types.ContentType.DOCUMENT,
-                                                                    types.ContentType.PHOTO,
-                                                                    types.ContentType.STICKER,
-                                                                    types.ContentType.VIDEO,
-                                                                    types.ContentType.VOICE])
+        supported_messages = [types.ContentType.TEXT,
+                              types.ContentType.CONTACT,
+                              types.ContentType.ANIMATION,
+                              types.ContentType.AUDIO,
+                              types.ContentType.DOCUMENT,
+                              types.ContentType.PHOTO,
+                              types.ContentType.STICKER,
+                              types.ContentType.VIDEO,
+                              types.ContentType.VOICE]
+        dp.register_message_handler(message_handler, content_types=supported_messages)
+        dp.register_edited_message_handler(message_handler, content_types=supported_messages)
+
         dp.register_message_handler(receive_invite, content_types=[types.ContentType.NEW_CHAT_MEMBERS])
         dp.register_message_handler(receive_left, content_types=[types.ContentType.LEFT_CHAT_MEMBER])
         dp.register_message_handler(receive_migrate, content_types=[types.ContentType.MIGRATE_TO_CHAT_ID])
