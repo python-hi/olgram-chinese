@@ -639,3 +639,7 @@ msgstr ""
 "\n"
 "\n"
 "This bot was created using @OlgramBot"
+
+
+msgid "Не удаётся связаться с владельцем бота"
+msgstr "Cannot contact the owner of the bot"
