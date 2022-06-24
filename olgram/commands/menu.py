@@ -335,7 +335,7 @@ async def start_text_received(message: types.Message, state: FSMContext):
     async with state.proxy() as proxy:
         bot_id = proxy.get("bot_id")
     bot = await Bot.get_or_none(pk=bot_id)
-    bot.start_text = message.text
+    bot.start_text = message.html_text
     await bot.save()
     await send_bot_text_menu(bot, chat_id=message.chat.id)
 
@@ -345,7 +345,7 @@ async def second_text_received(message: types.Message, state: FSMContext):
     async with state.proxy() as proxy:
         bot_id = proxy.get("bot_id")
     bot = await Bot.get_or_none(pk=bot_id)
-    bot.second_text = message.text
+    bot.second_text = message.html_text
     await bot.save()
     await send_bot_second_text_menu(bot, chat_id=message.chat.id)
 

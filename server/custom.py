@@ -137,7 +137,7 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
 
     # И отправить пользователю специальный текст, если он указан
     if bot.second_text:
-        return SendMessage(chat_id=message.chat.id, text=bot.second_text)
+        return SendMessage(chat_id=message.chat.id, text=bot.second_text, parse_mode="HTML")
 
 
 async def handle_operator_message(message: types.Message, super_chat_id: int, bot):
@@ -200,7 +200,7 @@ async def message_handler(message: types.Message, *args, **kwargs):
         text = bot.start_text
         if bot.enable_olgram_text:
             text += _(ServerSettings.append_text())
-        return SendMessage(chat_id=message.chat.id, text=text)
+        return SendMessage(chat_id=message.chat.id, text=text, parse_mode="HTML")
 
     if message.text and message.text == "/security_policy":
         # На команду security_policy нужно ответить, не пересылая сообщение никуда
