@@ -48,6 +48,12 @@ async def del_promo(message: types.Message, state: FSMContext):
     if not promo:
         return await message.answer(_("Такого кода не существует"))
 
+    user = await models.User.filter(promo=promo)
+    bots = await user.bots()
+    for bot in bots:
+        bot.enable_olgram_text = True
+        await bot.save(update_fields=["enable_olgram_text"])
+
     await promo.delete()
 
     await message.answer(_("Промокод отозван"))
