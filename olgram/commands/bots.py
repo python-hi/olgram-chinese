@@ -9,7 +9,7 @@ import re
 from textwrap import dedent
 
 from olgram.models.models import Bot, User
-from olgram.settings import OlgramSettings
+from olgram.settings import OlgramSettings, BotSettings
 from olgram.commands.menu import send_bots_menu
 from server.server import register_token
 from locales.locale import _
@@ -103,6 +103,9 @@ async def bot_added(message: types.Message, state: FSMContext):
         return await on_dummy_token()
     except TelegramAPIError:
         return await on_unknown_error()
+
+    if token == BotSettings.token():
+        return await on_duplication_bot()
 
     user, created = await User.get_or_create(telegram_id=message.from_user.id)
     bot = Bot(token=Bot.encrypted_token(token), owner=user, name=test_bot_info.username,

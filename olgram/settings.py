@@ -110,6 +110,7 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", "WARNING"))
 
 class BotSettings(AbstractSettings):
     @classmethod
+    @lru_cache
     def token(cls) -> str:
         """
         Токен olgram бота
