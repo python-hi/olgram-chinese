@@ -41,7 +41,7 @@ class OlgramSettings(AbstractSettings):
 
     @classmethod
     def version(cls):
-        return "0.3.3"
+        return "0.4.0"
 
     @classmethod
     @lru_cache
