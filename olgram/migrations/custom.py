@@ -10,7 +10,6 @@ import logging
 async def upgrade_1():
     """Шифруем токены"""
     meta_info = await MetaInfo.first()
-    print("version", meta_info.version)
     if meta_info.version != 0:
         logging.info("skip")
         return
@@ -28,7 +27,6 @@ async def upgrade_1():
 async def upgrade_2():
     """Отменяем малый TTL для старых сообщений"""
     meta_info = await MetaInfo.first()
-    print("version", meta_info.version)
     if meta_info.version != 1:
         logging.info("skip")
         return
@@ -51,7 +49,6 @@ async def upgrade_3():
     import html
 
     meta_info = await MetaInfo.first()
-    print("version", meta_info.version)
     if meta_info.version != 2:
         logging.info("skip")
         return
