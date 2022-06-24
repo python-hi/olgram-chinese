@@ -11,7 +11,7 @@ from olgram.settings import OlgramSettings
 from locales.locale import _
 
 
-@dp.message_handler(commands=["notify-owner"], state="*")
+@dp.message_handler(commands=["notifyowner"], state="*")
 async def notify(message: types.Message, state: FSMContext):
     """
     Команда /notify-owner
