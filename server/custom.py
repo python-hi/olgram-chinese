@@ -83,24 +83,17 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
                          pexpire=ServerSettings.redis_timeout_ms())
         return new_message
     else:
-        new_message = await message.forward(super_chat_id)
+        try:
+            new_message = await message.forward(super_chat_id)
+        except exceptions.MessageCantBeForwarded:
+            new_message = await message.copy_to(super_chat_id)
         await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
                          pexpire=ServerSettings.redis_timeout_ms())
         return new_message
 
 
-async def handle_user_message(message: types.Message, super_chat_id: int, bot):
-    """Обычный пользователь прислал сообщение в бот, нужно переслать его операторам"""
-    _ = _get_translator(message)
-    is_super_group = super_chat_id < 0
-
-    # Проверить, не забанен ли пользователь
-    banned = await bot.banned_users.filter(telegram_id=message.chat.id)
-    if banned:
-        return SendMessage(chat_id=message.chat.id,
-                           text=_("Вы заблокированы в этом боте"))
-
-    # Пересылаем сообщение в супер-чат
+async def send_to_superchat(is_super_group: bool, message: types.Message, super_chat_id: int, bot):
+    """Пересылка сообщения от пользователя оператору (логика потоков сообщений)"""
     if is_super_group and bot.enable_threads:
         thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
         if thread_first_message:
@@ -118,8 +111,26 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
             new_message = await send_user_message(message, super_chat_id, bot)
             await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
                              pexpire=ServerSettings.thread_timeout_ms())
-    else:  # личные сообщения не поддерживают потоки сообщений: простой forward
+    else:  # личные сообщения не поддерживают потоки сообщений: просто отправляем сообщение
         await send_user_message(message, super_chat_id, bot)
+
+
+async def handle_user_message(message: types.Message, super_chat_id: int, bot):
+    """Обычный пользователь прислал сообщение в бот, нужно переслать его операторам"""
+    _ = _get_translator(message)
+    is_super_group = super_chat_id < 0
+
+    # Проверить, не забанен ли пользователь
+    banned = await bot.banned_users.filter(telegram_id=message.chat.id)
+    if banned:
+        return SendMessage(chat_id=message.chat.id,
+                           text=_("Вы заблокированы в этом боте"))
+
+    # Пересылаем сообщение в супер-чат
+    try:
+        await send_to_superchat(is_super_group, message, super_chat_id, bot)
+    except exceptions.Unauthorized:
+        return SendMessage(chat_id=message.chat.id, text=_("Не удаётся связаться с владельцем бота"))
 
     bot.incoming_messages_count = F("incoming_messages_count") + 1
     await bot.save(update_fields=["incoming_messages_count"])
@@ -181,7 +192,6 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
 
 
 async def message_handler(message: types.Message, *args, **kwargs):
-    _logger.info("message handler")
     _ = _get_translator(message)
     bot = db_bot_instance.get()
 
