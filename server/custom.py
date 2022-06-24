@@ -188,7 +188,7 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
         await message.forward(super_chat_id)
         # И отправить пользователю специальный текст, если он указан
         if bot.second_text:
-            return SendMessage(chat_id=message.chat.id, text=bot.second_text)
+            return SendMessage(chat_id=message.chat.id, text=bot.second_text, parse_mode="HTML")
 
 
 async def message_handler(message: types.Message, *args, **kwargs):
