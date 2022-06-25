@@ -129,7 +129,7 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
     # Пересылаем сообщение в супер-чат
     try:
         await send_to_superchat(is_super_group, message, super_chat_id, bot)
-    except exceptions.Unauthorized:
+    except (exceptions.Unauthorized, exceptions.ChatNotFound):
         return SendMessage(chat_id=message.chat.id, text=_("Не удаётся связаться с владельцем бота"))
 
     bot.incoming_messages_count = F("incoming_messages_count") + 1
