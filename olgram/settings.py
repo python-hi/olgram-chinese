@@ -105,7 +105,8 @@ class ServerSettings(AbstractSettings):
         return int(timedelta(days=1).total_seconds() * 1000.0)
 
 
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "WARNING"))
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "WARNING"),
+                    format='%(asctime)s %(levelname)-8s %(message)s')
 
 
 class BotSettings(AbstractSettings):
