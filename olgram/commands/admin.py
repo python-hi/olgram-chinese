@@ -27,7 +27,7 @@ async def notify(message: types.Message, state: FSMContext):
         await message.answer(_("Нужно указать имя бота"))
         return
 
-    bot = await models.Bot.filter(name=bot_name.removeprefix("@")).first()
+    bot = await models.Bot.filter(name=bot_name.replace("@", "")).first()
 
     if not bot:
         await message.answer(_("Такого бота нет в системе"))
