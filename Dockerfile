@@ -1,4 +1,4 @@
-FROM python:3.9-buster
+FROM python:3.8-buster
 
 ENV PYTHONUNBUFFERED=1 \
     POETRY_VERSION=1.1.12 \
