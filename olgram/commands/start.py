@@ -31,7 +31,7 @@ async def start(message: types.Message, state: FSMContext):
     /mybots - управление ботами
 
     /help - помощь
-    """)), parse_mode="html")
+    """)), parse_mode="html", disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=["help"], state="*")
