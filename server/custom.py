@@ -149,7 +149,7 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
 
     if message.reply_to_message:
 
-        if message.reply_to_dmessage.from_user.id != message.bot.id:
+        if message.reply_to_message.from_user.id != message.bot.id:
             return  # нас интересуют только ответы на сообщения бота
 
         # В супер-чате кто-то ответил на сообщение пользователя, нужно переслать тому пользователю
