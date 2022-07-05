@@ -131,8 +131,8 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
         await send_to_superchat(is_super_group, message, super_chat_id, bot)
     except (exceptions.Unauthorized, exceptions.ChatNotFound):
         return SendMessage(chat_id=message.chat.id, text=_("Не удаётся связаться с владельцем бота"))
-    except exceptions.MessageToForwardNotFound:
-        _logger.error("(exception) Message to forward not found")
+    except exceptions.TelegramAPIError as err:
+        _logger.error(f"(exception on forwarding) {err}")
         return
 
     bot.incoming_messages_count = F("incoming_messages_count") + 1
@@ -149,7 +149,7 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
 
     if message.reply_to_message:
 
-        if message.reply_to_message.from_user.id != message.bot.id:
+        if message.reply_to_dmessage.from_user.id != message.bot.id:
             return  # нас интересуют только ответы на сообщения бота
 
         # В супер-чате кто-то ответил на сообщение пользователя, нужно переслать тому пользователю
