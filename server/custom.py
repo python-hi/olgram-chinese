@@ -145,7 +145,7 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
     # И отправить пользователю специальный текст, если он указан и если давно не отправляли
     if bot.second_text:
         send_auto = not await _redis.get(_last_message_uid(message.bot.id, message.chat.id))
-        await _redis.setex(_last_message_uid(message.bot.id, message.chat.id), 60 * 60 * 3, True)
+        await _redis.setex(_last_message_uid(message.bot.id, message.chat.id), 60 * 60 * 3, 1)
         if send_auto:
             return SendMessage(chat_id=message.chat.id, text=bot.second_text, parse_mode="HTML")
 
