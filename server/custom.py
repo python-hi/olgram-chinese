@@ -42,6 +42,10 @@ def _thread_uniqie_id(bot_id: int, chat_id: int) -> str:
     return f"thread_{bot_id}_{chat_id}"
 
 
+def _last_message_uid(bot_id: int, chat_id: int) -> str:
+    return f"lm_{bot_id}_{chat_id}"
+
+
 def _on_security_policy(message: types.Message, bot):
     _ = _get_translator(message)
     text = _("<b>Политика конфиденциальности</b>\n\n"
@@ -138,9 +142,12 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
     bot.incoming_messages_count = F("incoming_messages_count") + 1
     await bot.save(update_fields=["incoming_messages_count"])
 
-    # И отправить пользователю специальный текст, если он указан
+    # И отправить пользователю специальный текст, если он указан и если давно не отправляли
     if bot.second_text:
-        return SendMessage(chat_id=message.chat.id, text=bot.second_text, parse_mode="HTML")
+        send_auto = not await _redis.get(_last_message_uid(message.bot.id, message.chat.id))
+        await _redis.setex(_last_message_uid(message.bot.id, message.chat.id), 60 * 60 * 3, True)
+        if send_auto:
+            return SendMessage(chat_id=message.chat.id, text=bot.second_text, parse_mode="HTML")
 
 
 async def handle_operator_message(message: types.Message, super_chat_id: int, bot):
