@@ -643,3 +643,9 @@ msgstr ""
 
 msgid "Не удаётся связаться с владельцем бота"
 msgstr "Cannot contact the owner of the bot"
+
+msgid "Слишком много сообщений, подождите одну минуту"
+msgstr "Too many messages, wait one minute"
+
+msgid "Антифлуд"
+msgstr "Antiflood"

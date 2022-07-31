@@ -86,3 +86,8 @@ async def olgram_text(bot: Bot, call: types.CallbackQuery):
     if await bot.is_promo():
         bot.enable_olgram_text = not bot.enable_olgram_text
         await bot.save(update_fields=["enable_olgram_text"])
+
+
+async def antiflood(bot: Bot, call: types.CallbackQuery):
+    bot.enable_antiflood = not bot.enable_antiflood
+    await bot.save(update_fields=["enable_antiflood"])

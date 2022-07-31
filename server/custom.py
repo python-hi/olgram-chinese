@@ -46,6 +46,10 @@ def _last_message_uid(bot_id: int, chat_id: int) -> str:
     return f"lm_{bot_id}_{chat_id}"
 
 
+def _antiflood_marker_uid(bot_id: int, chat_id: int) -> str:
+    return f"af_{bot_id}_{chat_id}"
+
+
 def _on_security_policy(message: types.Message, bot):
     _ = _get_translator(message)
     text = _("<b>Политика конфиденциальности</b>\n\n"
@@ -130,6 +134,13 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
         return SendMessage(chat_id=message.chat.id,
                            text=_("Вы заблокированы в этом боте"))
 
+    # Проверить анти-флуд
+    if bot.enable_antiflood:
+        if await _redis.get(_antiflood_marker_uid(bot.pk, message.chat.id)):
+            return SendMessage(chat_id=message.chat.id,
+                               text=_("Слишком много сообщений, подождите одну минуту"))
+        await _redis.setex(_antiflood_marker_uid(bot.pk, message.chat.id), 60, 1)
+
     # Пересылаем сообщение в супер-чат
     try:
         await send_to_superchat(is_super_group, message, super_chat_id, bot)
@@ -144,8 +155,8 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
 
     # И отправить пользователю специальный текст, если он указан и если давно не отправляли
     if bot.second_text:
-        send_auto = not await _redis.get(_last_message_uid(message.bot.id, message.chat.id))
-        await _redis.setex(_last_message_uid(message.bot.id, message.chat.id), 60 * 60 * 3, 1)
+        send_auto = not await _redis.get(_last_message_uid(bot.pk, message.chat.id))
+        await _redis.setex(_last_message_uid(bot.pk, message.chat.id), 60 * 60 * 3, 1)
         if send_auto:
             return SendMessage(chat_id=message.chat.id, text=bot.second_text, parse_mode="HTML")
 
