@@ -77,7 +77,7 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
         user_info += message.from_user.full_name
         if message.from_user.username:
             user_info += " | @" + message.from_user.username
-        user_info += f" | #{message.from_user.id}"
+        user_info += f" | #ID{message.from_user.id}"
 
         # Добавлять информацию в конец текста
         if message.content_type == types.ContentType.TEXT and len(message.text) + len(user_info) < 4093:  # noqa:E721
