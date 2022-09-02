@@ -3,6 +3,7 @@
 """
 from aiogram import types
 from aiogram.utils.exceptions import TelegramAPIError, Unauthorized
+from aiogram import Bot as AioBot
 from olgram.models.models import Bot
 from server.server import unregister_token
 from locales.locale import _
@@ -61,6 +62,20 @@ async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
         bot.group_chat = None
         await bot.save()
         await call.answer(_("Выбран личный чат"))
+        return
+    if chat == "leave":
+        bot.group_chat = None
+        await bot.save()
+        chats = await bot.group_chats.all()
+        a_bot = AioBot(bot.decrypted_token())
+        for chat in chats:
+            try:
+                await chat.delete()
+                await a_bot.leave_chat(chat.chat_id)
+            except TelegramAPIError:
+                pass
+        await call.answer(_("Бот вышел из чатов"))
+        await a_bot.session.close()
         return
 
     chat_obj = await bot.group_chats.filter(id=chat).first()

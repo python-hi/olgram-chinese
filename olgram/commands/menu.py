@@ -68,6 +68,11 @@ async def send_chats_menu(bot: Bot, call: types.CallbackQuery):
                                        callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="chat",
                                                                        chat="personal"))
         )
+        keyboard.insert(
+            types.InlineKeyboardButton(text=_("❗️ Выйти из всех чатов"),
+                                       callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="chat",
+                                                                       chat="leave"))
+        )
     keyboard.insert(
         types.InlineKeyboardButton(text=_("<< Назад"),
                                    callback_data=menu_callback.new(level=1, bot_id=bot.id, operation=empty,
