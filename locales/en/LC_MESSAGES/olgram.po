@@ -5,39 +5,88 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-04-11 17:53+0300\n"
-"PO-Revision-Date: 2022-04-11 18:14+0300\n"
+"POT-Creation-Date: 2022-09-02 05:02+0400\n"
+"PO-Revision-Date: 2022-09-02 05:07+0400\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: pygettext.py 1.5\n"
-"X-Generator: Poedit 3.0\n"
-"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: en_US\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 3.1\n"
 
-#: olgram/commands/bot_actions.py:21
+#: olgram/commands/admin.py:21 olgram/commands/info.py:21
+#: olgram/commands/promo.py:23 olgram/commands/promo.py:39
+msgid "Недостаточно прав"
+msgstr "Not enough permissions"
+
+#: olgram/commands/admin.py:27
+msgid "Нужно указать имя бота"
+msgstr "You need to specify the bot's name"
+
+#: olgram/commands/admin.py:33
+msgid "Такого бота нет в системе"
+msgstr "There is no such bot"
+
+#: olgram/commands/admin.py:39 olgram/commands/admin.py:53
+msgid "Пропустить"
+msgstr "Skip"
+
+#: olgram/commands/admin.py:42
+msgid ""
+"Введите текст, который будет отправлен владельцу бота {0}. Напишите "
+"'Пропустить' чтобы отменить"
+msgstr ""
+"Enter the text that will be sent to the owner of the bot {0}. Write 'Skip' "
+"to cancel"
+
+#: olgram/commands/admin.py:50
+msgid "Поддерживается только текст"
+msgstr "Only text is supported"
+
+#: olgram/commands/admin.py:55 olgram/commands/admin.py:71
+msgid "Отменено"
+msgstr "Cancelled"
+
+#: olgram/commands/admin.py:61 olgram/commands/admin.py:69
+msgid "Отправить"
+msgstr "Send"
+
+#: olgram/commands/admin.py:62
+msgid "Отменить"
+msgstr "Cancel"
+
+#: olgram/commands/admin.py:81
+msgid "Отправлено"
+msgstr "Sent"
+
+#: olgram/commands/bot_actions.py:22
 msgid "Бот удалён"
 msgstr "Bot removed"
 
-#: olgram/commands/bot_actions.py:37 olgram/commands/bot_actions.py:49
+#: olgram/commands/bot_actions.py:38 olgram/commands/bot_actions.py:50
 msgid "Текст сброшен"
-msgstr ""
+msgstr "Text is reset"
 
-#: olgram/commands/bot_actions.py:63
+#: olgram/commands/bot_actions.py:64
 msgid "Выбран личный чат"
 msgstr "Personal chat selected"
 
-#: olgram/commands/bot_actions.py:68
+#: olgram/commands/bot_actions.py:77
+msgid "Бот вышел из чатов"
+msgstr "Bot leaved chats"
+
+#: olgram/commands/bot_actions.py:83
 msgid "Нельзя привязать бота к этому чату"
 msgstr "You can't bind a bot to this chat room"
 
-#: olgram/commands/bot_actions.py:72
+#: olgram/commands/bot_actions.py:87
 msgid "Выбран чат {0}"
 msgstr "Selected chat {0}"
 
-#: olgram/commands/bots.py:42
+#: olgram/commands/bots.py:46
 msgid ""
 "У вас уже слишком много ботов. Удалите какой-нибудь свой бот из Olgram(/"
 "mybots -> (Выбрать бота) -> Удалить бот)"
@@ -45,7 +94,7 @@ msgstr ""
 "You already have too many bots. Remove any of your bots from Olgram(/mybots -"
 "> (Select bot) -> Remove bot)"
 
-#: olgram/commands/bots.py:46
+#: olgram/commands/bots.py:50
 msgid ""
 "\n"
 "    Чтобы подключить бот, вам нужно выполнить три действия:\n"
@@ -72,7 +121,7 @@ msgstr ""
 "Chatfuel, Livegram and others).\n"
 "    "
 
-#: olgram/commands/bots.py:66
+#: olgram/commands/bots.py:70
 msgid ""
 "\n"
 "        Это не токен бота.\n"
@@ -88,7 +137,7 @@ msgstr ""
 "abc123_AbcdEFghijKLMnopqrstu12\n"
 "        "
 
-#: olgram/commands/bots.py:73
+#: olgram/commands/bots.py:77
 msgid ""
 "\n"
 "        Не удалось запустить этого бота: неверный токен\n"
@@ -98,7 +147,7 @@ msgstr ""
 "        Failed to start this bot: Wrong token\n"
 "        "
 
-#: olgram/commands/bots.py:78
+#: olgram/commands/bots.py:82
 msgid ""
 "\n"
 "        Не удалось запустить этого бота: непредвиденная ошибка\n"
@@ -108,7 +157,7 @@ msgstr ""
 "        Failed to start this bot: unexpected error\n"
 "        "
 
-#: olgram/commands/bots.py:83
+#: olgram/commands/bots.py:87
 msgid ""
 "\n"
 "        Такой бот уже есть в базе данных\n"
@@ -118,34 +167,33 @@ msgstr ""
 "        Such a bot is already in the database\n"
 "        "
 
-#: olgram/commands/bots.py:115
+#: olgram/commands/bots.py:122
 msgid "Бот добавлен! Список ваших ботов: /mybots"
 msgstr "Bot added! List of your bots: /mybots"
 
-#: olgram/commands/info.py:21 olgram/commands/promo.py:23
-#: olgram/commands/promo.py:39
-msgid "Недостаточно прав"
-msgstr "Not enough permissions"
-
-#: olgram/commands/info.py:32
+#: olgram/commands/info.py:34
 msgid "Количество ботов: {0}\n"
 msgstr "Number of bots: {0}\n"
 
-#: olgram/commands/info.py:33
+#: olgram/commands/info.py:35
 msgid "Количество пользователей (у конструктора): {0}\n"
 msgstr "Number of users (at the constructor): {0}\n"
 
-#: olgram/commands/info.py:34
+#: olgram/commands/info.py:36
 msgid "Шаблонов ответов: {0}\n"
 msgstr "Answer templates: {0}\n"
 
-#: olgram/commands/info.py:35
+#: olgram/commands/info.py:37
 msgid "Входящих сообщений у всех ботов: {0}\n"
 msgstr "Incoming messages from all bots: {0}\n"
 
-#: olgram/commands/info.py:36
+#: olgram/commands/info.py:38
 msgid "Исходящих сообщений у всех ботов: {0}\n"
 msgstr "All bots have outgoing messages: {0}\n"
+
+#: olgram/commands/info.py:39
+msgid "Промо-кодов выдано: {0}\n"
+msgstr "Promo codes issued: {0}\n"
 
 #: olgram/commands/menu.py:31
 msgid ""
@@ -167,15 +215,19 @@ msgstr "Your bots"
 
 #: olgram/commands/menu.py:67
 msgid "Личные сообщения"
-msgstr "Личные сообщения"
+msgstr "Personal messages"
 
-#: olgram/commands/menu.py:72 olgram/commands/menu.py:117
-#: olgram/commands/menu.py:143 olgram/commands/menu.py:174
-#: olgram/commands/menu.py:235
+#: olgram/commands/menu.py:72
+msgid "❗️ Выйти из всех чатов"
+msgstr "❗️ Leave all chats"
+
+#: olgram/commands/menu.py:77 olgram/commands/menu.py:122
+#: olgram/commands/menu.py:148 olgram/commands/menu.py:184
+#: olgram/commands/menu.py:247
 msgid "<< Назад"
 msgstr "<< Back"
 
-#: olgram/commands/menu.py:78
+#: olgram/commands/menu.py:83
 msgid ""
 "\n"
 "        Этот бот не добавлен в чаты, поэтому все сообщения будут приходить "
@@ -197,7 +249,7 @@ msgstr ""
 "        again.\n"
 "        "
 
-#: olgram/commands/menu.py:85
+#: olgram/commands/menu.py:90
 msgid ""
 "\n"
 "        В этом разделе вы можете привязать бота @{0} к чату.\n"
@@ -209,27 +261,27 @@ msgstr ""
 "        Select the chat room where the bot will forward messages.\n"
 "        "
 
-#: olgram/commands/menu.py:97
+#: olgram/commands/menu.py:102
 msgid "Текст"
 msgstr "Text"
 
-#: olgram/commands/menu.py:102
+#: olgram/commands/menu.py:107
 msgid "Чат"
 msgstr "Chat"
 
-#: olgram/commands/menu.py:107
+#: olgram/commands/menu.py:112
 msgid "Удалить бот"
 msgstr "Delete bot"
 
-#: olgram/commands/menu.py:112
+#: olgram/commands/menu.py:117
 msgid "Статистика"
 msgstr "Statistics"
 
-#: olgram/commands/menu.py:121
+#: olgram/commands/menu.py:126
 msgid "Опции"
 msgstr "Options"
 
-#: olgram/commands/menu.py:126
+#: olgram/commands/menu.py:131
 msgid ""
 "\n"
 "    Управление ботом @{0}.\n"
@@ -247,11 +299,11 @@ msgstr ""
 "    @civsocit_feedback_bot\n"
 "    "
 
-#: olgram/commands/menu.py:138
+#: olgram/commands/menu.py:143
 msgid "Да, удалить бот"
 msgstr "Yes, delete the bot"
 
-#: olgram/commands/menu.py:147
+#: olgram/commands/menu.py:152
 msgid ""
 "\n"
 "    Вы уверены, что хотите удалить бота @{0}?\n"
@@ -261,68 +313,87 @@ msgstr ""
 "    Are you sure you want to delete the bot @{0}?\n"
 "    "
 
-#: olgram/commands/menu.py:156
+#: olgram/commands/menu.py:161
 msgid "Потоки сообщений"
 msgstr "Message threads"
 
-#: olgram/commands/menu.py:161
+#: olgram/commands/menu.py:166
 msgid "Данные пользователя"
 msgstr "User data"
 
-#: olgram/commands/menu.py:168
+#: olgram/commands/menu.py:171
+msgid "Антифлуд"
+msgstr "Antiflood"
+
+#: olgram/commands/menu.py:178
 msgid "Olgram подпись"
 msgstr "Olgram signature"
 
-#: olgram/commands/menu.py:179 olgram/commands/menu.py:180
+#: olgram/commands/menu.py:189 olgram/commands/menu.py:190
 msgid "включены"
 msgstr "enabled"
 
-#: olgram/commands/menu.py:179 olgram/commands/menu.py:180
+#: olgram/commands/menu.py:189 olgram/commands/menu.py:190
 msgid "выключены"
 msgstr "disabled"
 
-#: olgram/commands/menu.py:181
+#: olgram/commands/menu.py:191
+#, fuzzy
+#| msgid "включены"
+msgid "включен"
+msgstr "enabled"
+
+#: olgram/commands/menu.py:191
+#, fuzzy
+#| msgid "выключены"
+msgid "выключен"
+msgstr "disabled"
+
+#: olgram/commands/menu.py:192
 msgid ""
 "\n"
-"    <a href=\"https://olgram.readthedocs.io/ru/latest/options.html#threads"
-"\">Потоки сообщений</a>: <b>{0}</b>\n"
-"    <a href=\"https://olgram.readthedocs.io/ru/latest/options.html#user-info"
-"\">Данные пользователя</a>: <b>{1}</b>\n"
+"    <a href=\"https://olgram.readthedocs.io/ru/latest/options."
+"html#threads\">Потоки сообщений</a>: <b>{0}</b>\n"
+"    <a href=\"https://olgram.readthedocs.io/ru/latest/options.html#user-"
+"info\">Данные пользователя</a>: <b>{1}</b>\n"
+"    <a href=\"https://olgram.readthedocs.io/ru/latest/options."
+"html#antiflood\">Антифлуд</a>: <b>{2}</b>\n"
 "    "
 msgstr ""
 "\n"
-"    <a href=\"https://olgram.readthedocs.io/ru/latest/options.html#threads"
-"\">Потоки сообщений</a>: <b>{0}</b>\n"
-"    <a href=\"https://olgram.readthedocs.io/ru/latest/options.html#user-info"
-"\">Данные пользователя</a>: <b>{1}</b>\n"
-"    "
+"    <a href=\"https://olgram.readthedocs.io/ru/latest/options."
+"html#threads\">Threads</a>: <b>{0}</b>\n"
+"    <a href=\"https://olgram.readthedocs.io/ru/latest/options.html#user-"
+"info\">User data</a>: <b>{1}</b>\n"
+"    <a href=\"https://olgram.readthedocs.io/ru/latest/options."
+"html#antiflood\">Antiflood</a>: <b>{2}</b>"
 
-#: olgram/commands/menu.py:187
+#: olgram/commands/menu.py:199
 msgid "включена"
 msgstr "enabled"
 
-#: olgram/commands/menu.py:187
+#: olgram/commands/menu.py:199
 msgid "выключена"
 msgstr "disabled"
 
-#: olgram/commands/menu.py:188
+#: olgram/commands/menu.py:200
 msgid "Olgram подпись: <b>{0}</b>"
 msgstr "Olgram signature: <b>{0}</b>"
 
-#: olgram/commands/menu.py:198 olgram/commands/menu.py:260
-#: olgram/commands/menu.py:302
+#: olgram/commands/menu.py:210 olgram/commands/menu.py:272
+#: olgram/commands/menu.py:314
 msgid "<< Завершить редактирование"
 msgstr "<< Finish editing"
 
-#: olgram/commands/menu.py:202
+#: olgram/commands/menu.py:214
 msgid "Автоответчик"
 msgstr "Autoresponder"
 
-#: olgram/commands/menu.py:207 olgram/commands/menu.py:274
+#: olgram/commands/menu.py:219 olgram/commands/menu.py:286
 msgid "Сбросить текст"
 msgstr "Reset text"
 
-#: olgram/commands/menu.py:212
+#: olgram/commands/menu.py:224
 msgid ""
 "\n"
 "    Сейчас вы редактируете текст, который отправляется после того, как "
@@ -348,7 +419,7 @@ msgstr ""
 "    Send a message to change the text.\n"
 "    "
 
-#: olgram/commands/menu.py:239
+#: olgram/commands/menu.py:251
 msgid ""
 "\n"
 "    Статистика по боту @{0}\n"
@@ -368,15 +439,15 @@ msgstr ""
 "    Banned users: <b>{4}</b>\n"
 "    "
 
-#: olgram/commands/menu.py:264
+#: olgram/commands/menu.py:276
 msgid "Предыдущий текст"
 msgstr "Previous text"
 
-#: olgram/commands/menu.py:269
+#: olgram/commands/menu.py:281
 msgid "Шаблоны ответов..."
 msgstr "Answer templates..."
 
-#: olgram/commands/menu.py:279
+#: olgram/commands/menu.py:291
 msgid ""
 "\n"
 "    Сейчас вы редактируете текст автоответчика. Это сообщение отправляется в "
@@ -402,11 +473,11 @@ msgstr ""
 "    Send a message to change the text.\n"
 "    "
 
-#: olgram/commands/menu.py:289
+#: olgram/commands/menu.py:301
 msgid "(отключено)"
 msgstr "(disabled)"
 
-#: olgram/commands/menu.py:306
+#: olgram/commands/menu.py:318
 msgid ""
 "\n"
 "    Сейчас вы редактируете шаблоны ответов для @{0}. Текущие шаблоны:\n"
@@ -432,27 +503,27 @@ msgstr ""
 "    To remove a template from the list, send its number in the list (for "
 "example, 4) "
 
-#: olgram/commands/menu.py:325
+#: olgram/commands/menu.py:337
 msgid "(нет шаблонов)"
 msgstr "(no templates)"
 
-#: olgram/commands/menu.py:364
+#: olgram/commands/menu.py:376
 msgid "У вас нет шаблонов, чтобы их удалять"
 msgstr "You don't have templates to delete them"
 
-#: olgram/commands/menu.py:366
+#: olgram/commands/menu.py:378
 msgid "Неправильное число. Чтобы удалить шаблон, введите число от 0 до {0}"
 msgstr "To delete a template, enter a number between 0 and {0}"
 
-#: olgram/commands/menu.py:374
+#: olgram/commands/menu.py:386
 msgid "У вашего бота уже слишком много шаблонов"
 msgstr "Your bot already has too many templates"
 
-#: olgram/commands/menu.py:378
+#: olgram/commands/menu.py:390
 msgid "Такой текст уже есть в списке шаблонов"
 msgstr "This text is already in the list of templates"
 
-#: olgram/commands/menu.py:396
+#: olgram/commands/menu.py:408
 msgid "У вас нет прав на этого бота"
 msgstr "You have no permissions to this bot"
 
@@ -472,34 +543,35 @@ msgstr "Incorrect token"
 msgid "Такого кода не существует"
 msgstr "There is no such code"
 
-#: olgram/commands/promo.py:53
+#: olgram/commands/promo.py:59
 msgid "Промокод отозван"
 msgstr "Promotion code withdrawn"
 
-#: olgram/commands/promo.py:64
+#: olgram/commands/promo.py:70
 msgid ""
 "Укажите аргумент: промокод. Например: <pre>/set_promo my-promo-code</pre>"
 msgstr ""
 "Specify the argument: promo code. For example: <pre>/set_promo my-promo-"
 "code</pre>"
 
-#: olgram/commands/promo.py:72 olgram/commands/promo.py:76
+#: olgram/commands/promo.py:78 olgram/commands/promo.py:82
 msgid "Промокод не найден"
 msgstr "Promo code not found"
 
-#: olgram/commands/promo.py:79
+#: olgram/commands/promo.py:85
 msgid "Промокод уже использован"
 msgstr "Promo code has already been used"
 
-#: olgram/commands/promo.py:85
+#: olgram/commands/promo.py:91
 msgid "Промокод активирован! Спасибо 🙌"
 msgstr "Promo code activated! Thank you 🙌"
 
-#: olgram/commands/start.py:25
+#: olgram/commands/start.py:23
 msgid ""
 "\n"
 "    Olgram Bot — это конструктор ботов обратной связи в Telegram. Подробнее "
-"<a href=\"https://olgram.readthedocs.io\">читайте здесь</a>.\n"
+"<a href=\"https://olgram.readthedocs.io\">читайте здесь</a>. Следите за "
+"обновлениями <a href=\"https://t.me/civsoc_it\">здесь</a>.\n"
 "\n"
 "    Используйте эти команды, чтобы управлять этим ботом:\n"
 "\n"
@@ -510,18 +582,18 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Olgram Bot — это конструктор ботов обратной связи в Telegram. Подробнее "
-"<a href=\"https://olgram.readthedocs.io\">читайте здесь</a>.\n"
+"    Olgram Bot is a feedback bot contructor for Telegram. More info <a "
+"href=\"https://olgram.readthedocs.io\">here</a>.\n"
 "\n"
-"    Используйте эти команды, чтобы управлять этим ботом:\n"
+"    Use that commands to control bot:\n"
 "\n"
-"    /addbot - добавить бот\n"
-"    /mybots - управление ботами\n"
+"    /addbot - add bot\n"
+"    /mybots - bot control\n"
 "\n"
-"    /help - помощь\n"
+"    /help - help\n"
 "    "
 
-#: olgram/commands/start.py:44
+#: olgram/commands/start.py:43
 msgid ""
 "\n"
 "    Читайте инструкции на нашем сайте https://olgram.readthedocs.io\n"
@@ -555,7 +627,7 @@ msgstr "The bot owner has restricted access to this functionality 😞"
 msgid "Владелец бота ограничил доступ к этому функционалу😞"
 msgstr "The owner of the bot has restricted access to this function😞"
 
-#: server/custom.py:47
+#: server/custom.py:55
 msgid ""
 "<b>Политика конфиденциальности</b>\n"
 "\n"
@@ -574,7 +646,7 @@ msgstr ""
 "communicating with the operator; Olgram bots do not do mass mailings.\n"
 "\n"
 
-#: server/custom.py:53
+#: server/custom.py:61
 msgid ""
 "При отправке сообщения (кроме команд /start и /security_policy) оператор "
 "<b>видит</b> ваши имя пользователя, @username и идентификатор пользователя в "
@@ -584,7 +656,7 @@ msgstr ""
 "<b>sees</b> your username, @username and user ID by virtue of the settings "
 "that the operator specified when creating the bot."
 
-#: server/custom.py:57
+#: server/custom.py:65
 msgid ""
 "В зависимости от ваших настроек конфиденциальности Telegram, оператор может "
 "видеть ваш username, имя пользователя и другую информацию."
@@ -592,34 +664,42 @@ msgstr ""
 "Depending on your Telegram privacy settings, the operator may see your "
 "username, username and other information."
 
-#: server/custom.py:68
+#: server/custom.py:76
 msgid "Сообщение от пользователя "
 msgstr "Message from the user "
 
-#: server/custom.py:96
+#: server/custom.py:135
 msgid "Вы заблокированы в этом боте"
 msgstr "You are blocked in this bot"
 
-#: server/custom.py:142
+#: server/custom.py:141
+msgid "Слишком много сообщений, подождите одну минуту"
+msgstr "Too many messages, wait one minute"
+
+#: server/custom.py:148
+msgid "Не удаётся связаться с владельцем бота"
+msgstr "Cannot contact the owner of the bot"
+
+#: server/custom.py:179
 msgid ""
 "<i>Невозможно переслать сообщение: автор не найден (сообщение слишком "
 "старое?)</i>"
 msgstr ""
 "<i>Cannot forward this message: author not found (message too old?)</i>"
 
-#: server/custom.py:150
+#: server/custom.py:187
 msgid "Пользователь заблокирован"
 msgstr "User is blocked"
 
-#: server/custom.py:155
+#: server/custom.py:192
 msgid "Пользователь не был забанен"
 msgstr "The user was not banned"
 
-#: server/custom.py:158
+#: server/custom.py:195
 msgid "Пользователь разбанен"
 msgstr "A user has been unlocked"
 
-#: server/custom.py:163
+#: server/custom.py:200
 msgid "<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>"
 msgstr "<i>Cannot forward the message (has the author blocked the bot?)</i>"
 
@@ -631,21 +711,11 @@ msgstr "(Re)launch the bot"
 msgid "Политика конфиденциальности"
 msgstr "Privacy Policy"
 
-msgid ""
-"\n"
-"\n"
-"Этот бот создан с помощью @OlgramBot"
-msgstr ""
-"\n"
-"\n"
-"This bot was created using @OlgramBot"
-
-
-msgid "Не удаётся связаться с владельцем бота"
-msgstr "Cannot contact the owner of the bot"
-
-msgid "Слишком много сообщений, подождите одну минуту"
-msgstr "Too many messages, wait one minute"
-
-msgid "Антифлуд"
-msgstr "Antiflood"
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Этот бот создан с помощью @OlgramBot"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "This bot was created using @OlgramBot"
