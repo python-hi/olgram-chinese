@@ -151,7 +151,7 @@ async def send_bot_delete_menu(bot: Bot, call: types.CallbackQuery):
 
 async def send_bot_settings_menu(bot: Bot, call: types.CallbackQuery):
     await call.answer()
-    keyboard = types.InlineKeyboardMarkup(row_width=1)
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.insert(
         types.InlineKeyboardButton(text=_("Потоки сообщений"),
                                    callback_data=menu_callback.new(level=3, bot_id=bot.id, operation="threads",
