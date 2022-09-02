@@ -243,18 +243,13 @@ async def edited_message_handler(message: types.Message, *args, **kwargs):
 
 async def receive_invite(message: types.Message):
     bot = db_bot_instance.get()
-    print("RECEIVE INVITE")
     for member in message.new_chat_members:
-        print("MEMBER ", str(member))
         if member.id == message.bot.id:
-            print("MEMBER IS BOT")
             chat, _ = await GroupChat.get_or_create(chat_id=message.chat.id,
                                                     defaults={"name": message.chat.full_name})
             chat.name = message.chat.full_name
-            print("SAVE CHAT ", _)
             await chat.save()
             if chat not in await bot.group_chats.all():
-                print("ADD CHAT")
                 await bot.group_chats.add(chat)
                 await bot.save()
             break
