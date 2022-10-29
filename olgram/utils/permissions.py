@@ -1,7 +1,7 @@
 import aiogram.types as types
 from aiogram.dispatcher.handler import CancelHandler, current_handler
 from aiogram.dispatcher.middlewares import BaseMiddleware
-from collections.abc import Container
+import typing as ty
 from locales.locale import _
 
 
@@ -20,7 +20,7 @@ def public():
 
 
 class AccessMiddleware(BaseMiddleware):
-    def __init__(self, access_chat_ids: Container[int]):
+    def __init__(self, access_chat_ids: ty.Iterable[int]):
         self._access_chat_ids = access_chat_ids
         super(AccessMiddleware, self).__init__()
 
