@@ -45,9 +45,9 @@ class OlgramSettings(AbstractSettings):
 
     @classmethod
     @lru_cache
-    def admin_id(cls):
-        _id = cls._get_env("ADMIN_ID", True)
-        return int(_id) if _id else None
+    def admin_ids(cls):
+        _ids = cls._get_env("ADMIN_ID", True)
+        return set(map(int, _ids.split(","))) if _ids else None
 
     @classmethod
     @lru_cache
