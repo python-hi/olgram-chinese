@@ -24,9 +24,9 @@ def url_for_bot(bot: Bot) -> str:
 
 async def register_token(bot: Bot) -> bool:
     """
-    Зарегистрировать токен
-    :param bot: Бот
-    :return: получилось ли
+    注册一个 token
+    :param bot: token
+    :return:
     """
     await unregister_token(bot.decrypted_token())
 
@@ -37,10 +37,15 @@ async def register_token(bot: Bot) -> bool:
 
     res = await a_bot.set_webhook(url_for_bot(bot), certificate=certificate, drop_pending_updates=True,
                                   max_connections=10)
-    await a_bot.set_my_commands([
-        BotCommand("/start", _("(Пере)запустить бота")),
-        BotCommand("/security_policy", _("Политика конфиденциальности"))
-    ])
+    # await a_bot.set_my_commands([
+    #     BotCommand("/start", _("（重新）启动机器人")),
+    #     BotCommand("/security_policy", _("隐私政策"))
+    # ])
+    # await a_bot.set_my_commands([
+    #      BotCommand("", _("（重新）启动机器人")),
+    #      BotCommand("", _("隐私政策"))
+    #  ])
+    #   建议禁止上面的/start和/security_policy,直接删除命令就可以
 
     await a_bot.session.close()
     del a_bot
@@ -49,8 +54,8 @@ async def register_token(bot: Bot) -> bool:
 
 async def unregister_token(token: str):
     """
-    Удалить токен
-    :param token: токен
+    注册一个 token
+    :param token: token
     :return:
     """
     bot = AioBot(token)

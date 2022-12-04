@@ -52,18 +52,14 @@ def _antiflood_marker_uid(bot_id: int, chat_id: int) -> str:
 
 def _on_security_policy(message: types.Message, bot):
     _ = _get_translator(message)
-    text = _("<b>Политика конфиденциальности</b>\n\n"
-             "Этот бот не хранит ваши сообщения, имя пользователя и @username. При отправке сообщения (кроме команд "
-             "/start и /security_policy) ваш идентификатор пользователя записывается в кеш на некоторое время и потом "
-             "удаляется из кеша. Этот идентификатор используется только для общения с оператором; боты Olgram "
-             "не делают массовых рассылок.\n\n")
+    text = _("<b>隐私政策</b>\n\n"
+             "该机器人不存储您的消息、用户名和@username。 \n"
+             "当您发送消息时（除了 /start 和 /security_policy 命令），您的用户 ID 会被写入缓存一段时间，然后从缓存中删除。\n "
+             "此标识符仅用于与操作员通信； 机器人不进行群发邮件。\n\n")
     if bot.enable_additional_info:
-        text += _("При отправке сообщения (кроме команд /start и /security_policy) оператор <b>видит</b> ваши имя "
-                  "пользователя, @username и идентификатор пользователя в силу настроек, которые оператор указал при "
-                  "создании бота.")
+        text += _("发送消息时（ /start 和 /security_policy 命令除外），由于操作员在创建机器人时指定的设置，操作员会<b>看到</b>您的用户名、@username 和用户 ID。")
     else:
-        text += _("В зависимости от ваших настроек конфиденциальности Telegram, оператор может видеть ваш username, "
-                  "имя пользователя и другую информацию.")
+        text += _("根据telegram隐私设置，运营商可能会看到您的姓名，用户名和其他信息.")
 
     return SendMessage(chat_id=message.chat.id,
                        text=text,
@@ -71,9 +67,9 @@ def _on_security_policy(message: types.Message, bot):
 
 
 async def send_user_message(message: types.Message, super_chat_id: int, bot):
-    """Переслать сообщение от пользователя, добавлять к нему user info при необходимости"""
+    """转发来自用户的消息，必要时添加用户信息"""
     if bot.enable_additional_info:
-        user_info = _("Сообщение от пользователя ")
+        user_info = _("用户信息 ")
         user_info += message.from_user.full_name
         if message.from_user.username:
             user_info += " | @" + message.from_user.username
@@ -101,11 +97,11 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
 
 
 async def send_to_superchat(is_super_group: bool, message: types.Message, super_chat_id: int, bot):
-    """Пересылка сообщения от пользователя оператору (логика потоков сообщений)"""
+    """将消息从用户转发给操作员（消息流逻辑）"""
     if is_super_group and bot.enable_threads:
         thread_first_message = await _redis.get(_thread_uniqie_id(bot.pk, message.chat.id))
         if thread_first_message:
-            # переслать в супер-чат, отвечая на предыдущее сообщение
+            # 转发到超级聊天，回复上一条消息
             try:
                 new_message = await message.copy_to(super_chat_id, reply_to_message_id=int(thread_first_message))
                 await _redis.set(_message_unique_id(bot.pk, new_message.message_id), message.chat.id,
@@ -115,37 +111,37 @@ async def send_to_superchat(is_super_group: bool, message: types.Message, super_
                 await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
                                  pexpire=ServerSettings.thread_timeout_ms())
         else:
-            # переслать супер-чат
+            # 转发超级聊天
             new_message = await send_user_message(message, super_chat_id, bot)
             await _redis.set(_thread_uniqie_id(bot.pk, message.chat.id), new_message.message_id,
                              pexpire=ServerSettings.thread_timeout_ms())
-    else:  # личные сообщения не поддерживают потоки сообщений: просто отправляем сообщение
+    else:  # 私信不支持消息流：简单转发
         await send_user_message(message, super_chat_id, bot)
 
 
 async def handle_user_message(message: types.Message, super_chat_id: int, bot):
-    """Обычный пользователь прислал сообщение в бот, нужно переслать его операторам"""
+    """普通用户向机器人发送消息，您需要将其转发给运营商"""
     _ = _get_translator(message)
     is_super_group = super_chat_id < 0
 
-    # Проверить, не забанен ли пользователь
+    # 检查用户是否被禁止
     banned = await bot.banned_users.filter(telegram_id=message.chat.id)
     if banned:
         return SendMessage(chat_id=message.chat.id,
-                           text=_("Вы заблокированы в этом боте"))
+                           text=_("您在此机器人中被阻止"))
 
-    # Проверить анти-флуд
+    # 检查防爆
     if bot.enable_antiflood:
         if await _redis.get(_antiflood_marker_uid(bot.pk, message.chat.id)):
             return SendMessage(chat_id=message.chat.id,
-                               text=_("Слишком много сообщений, подождите одну минуту"))
+                               text=_("消息太多，请勿刷屏"))
         await _redis.setex(_antiflood_marker_uid(bot.pk, message.chat.id), 60, 1)
 
-    # Пересылаем сообщение в супер-чат
+    # 将消息转发到超级聊天
     try:
         await send_to_superchat(is_super_group, message, super_chat_id, bot)
     except (exceptions.Unauthorized, exceptions.ChatNotFound):
-        return SendMessage(chat_id=message.chat.id, text=_("Не удаётся связаться с владельцем бота"))
+        return SendMessage(chat_id=message.chat.id, text=_("无法联系机器人所有者"))
     except exceptions.TelegramAPIError as err:
         _logger.error(f"(exception on forwarding) {err}")
         return
@@ -153,7 +149,7 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
     bot.incoming_messages_count = F("incoming_messages_count") + 1
     await bot.save(update_fields=["incoming_messages_count"])
 
-    # И отправить пользователю специальный текст, если он указан и если давно не отправляли
+    # 如果指定，则向用户发送特殊文本
     if bot.second_text:
         send_auto = not await _redis.get(_last_message_uid(bot.pk, message.chat.id))
         await _redis.setex(_last_message_uid(bot.pk, message.chat.id), 60 * 60 * 3, 1)
@@ -162,42 +158,41 @@ async def handle_user_message(message: types.Message, super_chat_id: int, bot):
 
 
 async def handle_operator_message(message: types.Message, super_chat_id: int, bot):
-    """Оператор написал что-то, нужно переслать сообщение обратно пользователю, или забанить его и т.д."""
+    """运营商写了一些东西，你需要将消息转发给用户，或者禁止他等。"""
     _ = _get_translator(message)
 
     if message.reply_to_message:
 
         if message.reply_to_message.from_user.id != message.bot.id:
-            return  # нас интересуют только ответы на сообщения бота
+            return  # 我们只对机器人消息的回复感兴趣
 
-        # В супер-чате кто-то ответил на сообщение пользователя, нужно переслать тому пользователю
+        # 在超级聊天中，有人回复了用户的消息，你需要转发给那个用户
         chat_id = await _redis.get(_message_unique_id(bot.pk, message.reply_to_message.message_id))
         if not chat_id:
             chat_id = message.reply_to_message.forward_from_chat
             if not chat_id:
                 return SendMessage(chat_id=message.chat.id,
-                                   text=_("<i>Невозможно переслать сообщение: автор не найден (сообщение слишком "
-                                          "старое?)</i>"),
+                                   text=_("<i>无法转发消息：找不到用户（消息太旧？）</i>"),
                                    parse_mode="HTML")
         chat_id = int(chat_id)
 
         if message.text == "/ban":
             user, create = await BannedUser.get_or_create(telegram_id=chat_id, bot=bot)
             await user.save()
-            return SendMessage(chat_id=message.chat.id, text=_("Пользователь заблокирован"))
+            return SendMessage(chat_id=message.chat.id, text=_("用户已被屏蔽"))
 
         if message.text == "/unban":
             banned_user = await bot.banned_users.filter(telegram_id=chat_id).first()
             if not banned_user:
-                return SendMessage(chat_id=message.chat.id, text=_("Пользователь не был забанен"))
+                return SendMessage(chat_id=message.chat.id, text=_("取消屏蔽"))
             else:
                 await banned_user.delete()
-                return SendMessage(chat_id=message.chat.id, text=_("Пользователь разбанен"))
+                return SendMessage(chat_id=message.chat.id, text=_("用户解禁"))
 
         try:
             await message.copy_to(chat_id)
         except (exceptions.MessageError, exceptions.Unauthorized):
-            await message.reply(_("<i>Невозможно переслать сообщение (автор заблокировал бота?)</i>"),
+            await message.reply(_("<i>无法转发消息（机器人已被阻止？）</i>"),
                                 parse_mode="HTML")
             return
 
@@ -205,9 +200,9 @@ async def handle_operator_message(message: types.Message, super_chat_id: int, bo
         await bot.save(update_fields=["outgoing_messages_count"])
 
     elif super_chat_id > 0:
-        # в супер-чате кто-то пишет сообщение сам себе, только для личных сообщений
+        # 在超级聊天中，有人给自己写了一条消息，仅用于私人消息
         await message.forward(super_chat_id)
-        # И отправить пользователю специальный текст, если он указан
+        # 如果指定，则向用户发送特殊文本
         if bot.second_text:
             return SendMessage(chat_id=message.chat.id, text=bot.second_text, parse_mode="HTML")
 
@@ -217,14 +212,14 @@ async def message_handler(message: types.Message, *args, **kwargs):
     bot = db_bot_instance.get()
 
     if message.text and message.text == "/start":
-        # На команду start нужно ответить, не пересылая сообщение никуда
+        # 必须在不将消息转发到任何地方的情况下回答启动命令
         text = bot.start_text
         if bot.enable_olgram_text:
             text += _(ServerSettings.append_text())
         return SendMessage(chat_id=message.chat.id, text=text, parse_mode="HTML")
 
     if message.text and message.text == "/security_policy":
-        # На команду security_policy нужно ответить, не пересылая сообщение никуда
+        # 必须在不将消息转发到任何地方的情况下回答安全策略命令。
         return _on_security_policy(message, bot)
 
     super_chat_id = await bot.super_chat_id()
