@@ -29,10 +29,10 @@ async def init_olgram():
     from aiogram.types import BotCommand
     await bot.set_my_commands(
         [
-            BotCommand("start", _("Запустить бота")),
-            BotCommand("addbot", _("Добавить бот")),
-            BotCommand("mybots", _("Управление ботами")),
-            BotCommand("help", _("Справка"))
+            BotCommand("start", _("开始(启动)")),
+            BotCommand("addbot", _("添加机器人")),
+            BotCommand("mybots", _("我的机器人")),
+            BotCommand("help", _("帮助"))
         ]
     )
 
@@ -44,10 +44,10 @@ async def initialization():
 
 
 def main():
-    parser = argparse.ArgumentParser("Olgram bot and feedback server")
+    parser = argparse.ArgumentParser("电报机器人和反馈服务器")
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--noserver", help="Не запускать сервер обратной связи, только сам Olgram", action="store_true")
-    group.add_argument("--onlyserver", help="Запустить только сервер обратной связи, без Olgram", action="store_true")
+    group.add_argument("--noserver", help="不启动反馈服务器，只启动 Olgram 本身", action="store_true")
+    group.add_argument("--onlyserver", help="只运行反馈服务器，不运行 Olgram", action="store_true")
     args = parser.parse_args()
 
     loop = asyncio.get_event_loop()

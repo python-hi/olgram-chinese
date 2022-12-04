@@ -1,5 +1,5 @@
-# Конфигурация, удобная для разработки в PyCharm: бот запускается без docker, порты postgres и redis открыты на localhost
-# Не используйте её в production!
+# PyCharm 友好的配置：bot 运行时没有在 localhost 上打开 docker、postgres 和 redis 端口
+# 不要在生产中使用它！
 version: '3'
 services:
   postgres:

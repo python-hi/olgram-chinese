@@ -1,7 +1,7 @@
 [[package]]
 name = "aerich"
 version = "0.5.7"
-description = "A database migrations tool for Tortoise ORM."
+description = "Tortoise ORM 的数据库迁移工具。"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
@@ -20,7 +20,7 @@ asyncpg = ["asyncpg"]
 [[package]]
 name = "aiocache"
 version = "0.11.1"
-description = "multi backend asyncio cache"
+description = "多后端异步缓存"
 category = "main"
 optional = false
 python-versions = "*"
@@ -34,7 +34,7 @@ redis = ["aioredis (>=0.3.3)", "aioredis (>=1.0.0)"]
 [[package]]
 name = "aiogram"
 version = "2.13"
-description = "Is a pretty simple and fully asynchronous framework for Telegram Bot API"
+description = "是一个非常简单且完全异步的 Telegram Bot API 框架"
 category = "main"
 optional = false
 python-versions = "*"
@@ -51,7 +51,7 @@ proxy = ["aiohttp-socks (>=0.5.3,<0.6.0)"]
 [[package]]
 name = "aiohttp"
 version = "3.8.1"
-description = "Async http client/server framework (asyncio)"
+description = "异步 http 客户端/服务器框架 (asyncio)"
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -83,7 +83,7 @@ hiredis = "*"
 [[package]]
 name = "aiosignal"
 version = "1.2.0"
-description = "aiosignal: a list of registered asynchronous callbacks"
+description = "aiosignal：已注册的异步回调列表"
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -94,7 +94,7 @@ frozenlist = ">=1.1.0"
 [[package]]
 name = "aiosqlite"
 version = "0.17.0"
-description = "asyncio bridge to the standard sqlite3 module"
+description = "到标准 sqlite3 模块的异步桥接"
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -105,7 +105,7 @@ typing_extensions = ">=3.7.2"
 [[package]]
 name = "async-timeout"
 version = "4.0.2"
-description = "Timeout context manager for asyncio programs"
+description = "异步程序的超时上下文管理器"
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -113,7 +113,7 @@ python-versions = ">=3.6"
 [[package]]
 name = "asyncpg"
 version = "0.25.0"
-description = "An asyncio PostgreSQL driver"
+description = "一个异步 PostgreSQL 驱动程序"
 category = "main"
 optional = false
 python-versions = ">=3.6.0"
@@ -126,7 +126,7 @@ test = ["pycodestyle (>=2.7.0,<2.8.0)", "flake8 (>=3.9.2,<3.10.0)", "uvloop (>=0
 [[package]]
 name = "attrs"
 version = "21.4.0"
-description = "Classes Without Boilerplate"
+description = "没有样板的类"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -140,7 +140,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 [[package]]
 name = "babel"
 version = "2.10.3"
-description = "Internationalization utilities"
+description = "国际化实用程序"
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -151,7 +151,7 @@ pytz = ">=2015.7"
 [[package]]
 name = "certifi"
 version = "2022.6.15"
-description = "Python package for providing Mozilla's CA Bundle."
+description = "用于提供 Mozilla CA Bundle 的 Python 包"
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -159,7 +159,7 @@ python-versions = ">=3.6"
 [[package]]
 name = "charset-normalizer"
 version = "2.1.0"
-description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
+description = "真正的第一个通用字符集检测器。 开放、现代和积极维护的 Chardet 替代品。"
 category = "main"
 optional = false
 python-versions = ">=3.6.0"
@@ -170,7 +170,7 @@ unicode_backport = ["unicodedata2"]
 [[package]]
 name = "click"
 version = "8.1.3"
-description = "Composable command line interface toolkit"
+description = "可组合的命令行界面工具包"
 category = "main"
 optional = false
 python-versions = ">=3.7"
@@ -181,7 +181,7 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 [[package]]
 name = "colorama"
 version = "0.4.5"
-description = "Cross-platform colored terminal text."
+description = "跨平台彩色终端文本。"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -189,7 +189,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 [[package]]
 name = "ddlparse"
 version = "1.10.0"
-description = "DDL parase and Convert to BigQuery JSON schema"
+description = "DDL 解析并转换为 BigQuery JSON 架构"
 category = "main"
 optional = false
 python-versions = "*"
@@ -200,7 +200,7 @@ pyparsing = "*"
 [[package]]
 name = "dictdiffer"
 version = "0.9.0"
-description = "Dictdiffer is a library that helps you to diff and patch dictionaries."
+description = "Dictdiffer 是一个帮助您区分和修补字典的库。"
 category = "main"
 optional = false
 python-versions = "*"
@@ -214,7 +214,7 @@ tests = ["check-manifest (>=0.42)", "mock (>=1.3.0)", "pytest-cov (>=2.10.1)", "
 [[package]]
 name = "flake8"
 version = "4.0.1"
-description = "the modular source code checker: pep8 pyflakes and co"
+description = "模块化源代码检查器：pep8 pyflakes and co"
 category = "dev"
 optional = false
 python-versions = ">=3.6"
@@ -227,7 +227,7 @@ pyflakes = ">=2.4.0,<2.5.0"
 [[package]]
 name = "frozenlist"
 version = "1.3.0"
-description = "A list-like structure which implements collections.abc.MutableSequence"
+description = "实现 collections.abc.MutableSequence 的类似列表的结构"
 category = "main"
 optional = false
 python-versions = ">=3.7"
@@ -235,7 +235,7 @@ python-versions = ">=3.7"
 [[package]]
 name = "hiredis"
 version = "2.0.0"
-description = "Python wrapper for hiredis"
+description = "hiredis 的 Python 包装器"
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -243,7 +243,7 @@ python-versions = ">=3.6"
 [[package]]
 name = "idna"
 version = "3.3"
-description = "Internationalized Domain Names in Applications (IDNA)"
+description = "应用中的国际化域名 (IDNA)"
 category = "main"
 optional = false
 python-versions = ">=3.5"
@@ -251,7 +251,7 @@ python-versions = ">=3.5"
 [[package]]
 name = "iso8601"
 version = "0.1.16"
-description = "Simple module to parse ISO 8601 dates"
+description = "解析 ISO 8601 日期的简单模块"
 category = "main"
 optional = false
 python-versions = "*"
@@ -259,7 +259,7 @@ python-versions = "*"
 [[package]]
 name = "mccabe"
 version = "0.6.1"
-description = "McCabe checker, plugin for flake8"
+description = "McCabe 检查器，flake8 插件"
 category = "dev"
 optional = false
 python-versions = "*"
