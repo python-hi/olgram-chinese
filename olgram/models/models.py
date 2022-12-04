@@ -11,7 +11,7 @@ class MetaInfo(Model):
     version = fields.IntField(default=0)
 
     def __init__(self, **kwargs):
-        # Кажется это единственный способ сделать single-instance модель в TortoiseORM :(
+        # 这似乎是在 Tortoise ORM 中制作单实例模型的唯一方法:(
         if "id" in kwargs:
             kwargs["id"] = 0
         self.id = 0
@@ -28,8 +28,8 @@ class Bot(Model):
     name = fields.CharField(max_length=33)
     code = fields.UUIDField(default=uuid4, index=True)
     start_text = fields.TextField(default=dedent(_("""
-    Здравствуйте!
-    Напишите ваш вопрос и мы ответим вам в ближайшее время.
+    您好！ 
+    您的消息已收到,请耐心等候回复
     """)))
     second_text = fields.TextField(null=True, default=None)
 
