@@ -1,5 +1,7 @@
 # OLGram
 
+本项目拉取自olgram的项目,是一个telegram转发机器人,通过谷歌翻译中文,可提供有限的协助,也欢迎其他用户提供优秀的改良意见
+
 [![Static Analysis Status](https://github.com/civsocit/olgram/workflows/Linter/badge.svg)](https://github.com/civsocit/olgram/actions?workflow=Linter) 
 [![Deploy Status](https://github.com/civsocit/olgram/workflows/Deploy/badge.svg)](https://github.com/civsocit/olgram/actions?workflow=Deploy)
 [![Documentation](https://readthedocs.org/projects/olgram/badge/?version=latest)](https://olgram.readthedocs.io)
