@@ -1,6 +1,6 @@
 # Configuration file for the Sphinx documentation builder.
 
-# -- Project information
+# -- 项目信息
 
 project = 'Olgram'
 copyright = '2022, Civsocit'
