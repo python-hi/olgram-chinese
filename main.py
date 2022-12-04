@@ -54,10 +54,10 @@ def main():
     loop.run_until_complete(initialization())
 
     if not args.onlyserver:
-        print("Run olgram polling")
+        print("运行 olgram 轮询")
         loop.create_task(dp.start_polling())
     if not args.noserver:
-        print("Run olgram server")
+        print("运行 olgram 服务器")
         loop.create_task(server_main().start())
 
     loop.run_forever()
