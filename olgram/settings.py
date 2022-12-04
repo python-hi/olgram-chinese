@@ -11,7 +11,7 @@ from olgram.utils.crypto import Cryptor
 load_dotenv()
 
 
-# TODO: рефакторинг, использовать какой-нибудь lazy-config вместо своих костылей
+# TODO: 重构，使用一些惰性配置而不是你的拐杖
 
 class AbstractSettings(ABC):
     @classmethod
@@ -26,7 +26,7 @@ class OlgramSettings(AbstractSettings):
     @classmethod
     def max_bots_per_user(cls) -> int:
         """
-        Максимальное количество ботов у одного пользователя
+        每个用户的最大机器人数量
         :return: int
         """
         return 10
@@ -34,7 +34,7 @@ class OlgramSettings(AbstractSettings):
     @classmethod
     def max_bots_per_user_promo(cls) -> int:
         """
-        Максимальное количество ботов у одного пользователя с промо-доступом
+        每个用户的最大机器人数量
         :return: int
         """
         return 25
@@ -72,7 +72,7 @@ class ServerSettings(AbstractSettings):
     @classmethod
     def redis_path(cls) -> str:
         """
-        Путь до БД redis
+        redis数据库路径
         :return:
         """
         return cls._get_env("REDIS_PATH")
@@ -92,7 +92,7 @@ class ServerSettings(AbstractSettings):
 
     @classmethod
     def append_text(cls) -> str:
-        return "\n\nЭтот бот создан с помощью @OlgramBot"
+        return "\n\n "  #这个机器人是在转发机器人 的帮助下创建的
 
     @classmethod
     @lru_cache
@@ -114,7 +114,7 @@ class BotSettings(AbstractSettings):
     @lru_cache
     def token(cls) -> str:
         """
-        Токен olgram бота
+        机器人令牌
         :return:
         """
         return cls._get_env("BOT_TOKEN")
@@ -122,7 +122,7 @@ class BotSettings(AbstractSettings):
     @classmethod
     def language(cls) -> str:
         """
-        Язык
+        语言
         """
         lang = cls._get_env("O_LANG", allow_none=True)
         return lang.lower() if lang else "ru"
