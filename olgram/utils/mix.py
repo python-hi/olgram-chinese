@@ -17,7 +17,7 @@ async def edit_or_create(call: CallbackQuery, message: str,
     try:
         await call.message.edit_text(message, parse_mode=parse_mode)
         await call.message.edit_reply_markup(reply_markup)
-    except TelegramAPIError:  # кнопка устарела
+    except TelegramAPIError:  # 按钮已弃用
         await call.bot.send_message(call.message.chat.id, text=message, reply_markup=reply_markup,
                                     parse_mode=parse_mode)
 

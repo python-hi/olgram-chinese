@@ -7,8 +7,8 @@ from locales.locale import _
 
 def public():
     """
-    Хендлеры с этим декоратором будут обрабатываться даже если пользователь не является владельцем бота
-    (например, команда /help)
+    即使用户不是机器人的所有者，也会处理带有此装饰器的处理程序
+     （例如，/help 命令）
     :return:
     """
 
@@ -32,23 +32,23 @@ class AccessMiddleware(BaseMiddleware):
     async def on_process_message(self, message: types.Message, data: dict):
         admin_ids = self._access_chat_ids
         if not admin_ids:
-            return  # Администраторы бота вообще не указаны
+            return  # 完全未指定机器人管理员
 
-        if self._is_public_command():  # Эта команда разрешена всем пользователям
+        if self._is_public_command():  # 允许所有用户使用此命令
             return
 
         if message.chat.id not in admin_ids:
-            await message.answer(_("Владелец бота ограничил доступ к этому функционалу 😞"))
+            await message.answer(_("机器人所有者已限制访问此功能 😞"))
             raise CancelHandler()
 
     async def on_process_callback_query(self, call: types.CallbackQuery, data: dict):
         admin_ids = self._access_chat_ids
         if not admin_ids:
-            return  # Администраторы бота вообще не указаны
+            return  # 完全未指定机器人管理员
 
-        if self._is_public_command():  # Эта команда разрешена всем пользователям
+        if self._is_public_command():  # 允许所有用户使用此命令
             return
 
         if call.message.chat.id not in admin_ids:
-            await call.answer(_("Владелец бота ограничил доступ к этому функционалу😞"))
+            await call.answer(_("机器人所有者已限制访问此功能😞"))
             raise CancelHandler()
