@@ -16,21 +16,19 @@ from olgram.router import dp
 @public()
 async def start(message: types.Message, state: FSMContext):
     """
-    Команда /start
+    命令 /start
     """
     await state.reset_state()
 
-    await message.answer(dedent(_("""
-    Olgram Bot — это конструктор ботов обратной связи в Telegram. Подробнее \
-<a href="https://olgram.readthedocs.io">читайте здесь</a>. Следите за обновлениями \
-<a href="https://t.me/civsoc_it">здесь</a>.
+    await message.answer(dedent(_("""\n
+    创建telegram转发机器人
 
-    Используйте эти команды, чтобы управлять этим ботом:
+    使用这些命令来控制这个机器人:
 
-    /addbot - добавить бот
-    /mybots - управление ботами
+    /addbot - 添加机器人
+    /mybots - 我的机器人
 
-    /help - помощь
+    /help - 帮助
     """)), parse_mode="html", disable_web_page_preview=True)
 
 
@@ -38,12 +36,11 @@ async def start(message: types.Message, state: FSMContext):
 @public()
 async def help(message: types.Message, state: FSMContext):
     """
-    Команда /help
+    命令 /help
     """
     await message.answer(dedent(_("""
-    Читайте инструкции на нашем сайте https://olgram.readthedocs.io
-    Техническая поддержка: @civsocit_feedback_bot
-    Версия {0}
+    这是一个自用型机器人,没有帮助信息.有问题我会自己解决
+    如果有问题，请联系推广你使用的那个人
     """)).format(OlgramSettings.version()))
 
 
@@ -51,6 +48,6 @@ async def help(message: types.Message, state: FSMContext):
 @public()
 async def chat_id(message: types.Message, state: FSMContext):
     """
-    Команда /chatid
+    命令 /chatid
     """
     await message.answer(message.chat.id)

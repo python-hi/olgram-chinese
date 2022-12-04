@@ -1,5 +1,5 @@
 """
-Здесь метрики
+这里的指标
 """
 
 from aiogram import types
@@ -14,11 +14,11 @@ from locales.locale import _
 @dp.message_handler(commands=["info"], state="*")
 async def info(message: types.Message, state: FSMContext):
     """
-    Команда /info
+    命令 /info
     """
 
     if message.chat.id != OlgramSettings.supervisor_id():
-        await message.answer(_("Недостаточно прав"))
+        await message.answer(_("权限不够"))
         return
 
     bots = await models.Bot.all()
@@ -31,10 +31,10 @@ async def info(message: types.Message, state: FSMContext):
     income_messages = sum([bot.incoming_messages_count for bot in bots])
     outgoing_messages = sum([bot.outgoing_messages_count for bot in bots])
 
-    await message.answer(_("Количество ботов: {0}\n").format(bots_count) +
-                         _("Количество пользователей (у конструктора): {0}\n").format(user_count) +
-                         _("Шаблонов ответов: {0}\n").format(templates_count) +
-                         _("Входящих сообщений у всех ботов: {0}\n").format(income_messages) +
-                         _("Исходящих сообщений у всех ботов: {0}\n").format(outgoing_messages) +
-                         _("Промо-кодов выдано: {0}\n").format(promo_count) +
-                         _("Рекламную плашку выключили: {0}\n".format(olgram_text_disabled)))
+    await message.answer(_("机器人数量: {0}\n").format(bots_count) +
+                         _("用户数（用于构造函数）: {0}\n").format(user_count) +
+                         _("答案模板: {0}\n").format(templates_count) +
+                         _("所有机器人的传入消息: {0}\n").format(income_messages) +
+                         _("所有机器人的传出消息: {0}\n").format(outgoing_messages) +
+                         _("已发布促销代码: {0}\n").format(promo_count) +
+                         _("广告牌关了: {0}\n".format(olgram_text_disabled)))

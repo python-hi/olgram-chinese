@@ -1,5 +1,5 @@
 """
-Здесь работа с конкретным ботом
+这是使用特定机器人的工作
 """
 from aiogram import types
 from aiogram.utils.exceptions import TelegramAPIError, Unauthorized
@@ -11,15 +11,15 @@ from locales.locale import _
 
 async def delete_bot(bot: Bot, call: types.CallbackQuery):
     """
-    Пользователь решил удалить бота
+    用户决定删除机器人
     """
     try:
         await unregister_token(bot.decrypted_token())
     except Unauthorized:
-        # Вероятно пользователь сбросил токен или удалил бот, это уже не наши проблемы
+        # 用户可能重置令牌或删除机器人，这些不再是我们的问题
         pass
     await bot.delete()
-    await call.answer(_("Бот удалён"))
+    await call.answer(_("删除机器人"))
     try:
         await call.message.delete()
     except TelegramAPIError:
@@ -28,31 +28,31 @@ async def delete_bot(bot: Bot, call: types.CallbackQuery):
 
 async def reset_bot_text(bot: Bot, call: types.CallbackQuery):
     """
-    Пользователь решил сбросить текст бота к default
+    用户决定将机器人的文本重置为默认值
     :param bot:
     :param call:
     :return:
     """
     bot.start_text = bot._meta.fields_map['start_text'].default
     await bot.save()
-    await call.answer(_("Текст сброшен"))
+    await call.answer(_("重置文本"))
 
 
 async def reset_bot_second_text(bot: Bot, call: types.CallbackQuery):
     """
-    Пользователь решил сбросить second text бота
+    用户决定重置机器人的第二个文本
     :param bot:
     :param call:
     :return:
     """
     bot.second_text = bot._meta.fields_map['second_text'].default
     await bot.save()
-    await call.answer(_("Текст сброшен"))
+    await call.answer(_("重置文本"))
 
 
 async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
     """
-    Пользователь выбрал чат, в который хочет получать сообщения от бота
+    用户选择了一个他想从机器人接收消息的群组
     :param bot:
     :param call:
     :param chat:
@@ -61,7 +61,7 @@ async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
     if chat == "personal":
         bot.group_chat = None
         await bot.save()
-        await call.answer(_("Выбран личный чат"))
+        await call.answer(_("选择了私聊"))
         return
     if chat == "leave":
         bot.group_chat = None
@@ -80,11 +80,11 @@ async def select_chat(bot: Bot, call: types.CallbackQuery, chat: str):
 
     chat_obj = await bot.group_chats.filter(id=chat).first()
     if not chat_obj:
-        await call.answer(_("Нельзя привязать бота к этому чату"))
+        await call.answer(_("你不能将机器人链接到这个群聊"))
         return
     bot.group_chat = chat_obj
     await bot.save()
-    await call.answer(_("Выбран чат {0}").format(chat_obj.name))
+    await call.answer(_("聊天选择 {0}").format(chat_obj.name))
 
 
 async def threads(bot: Bot, call: types.CallbackQuery):

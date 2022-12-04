@@ -27,7 +27,7 @@ token_pattern = r'[0-9]{8,10}:[a-zA-Z0-9_-]{35}'
 @dp.message_handler(commands=["mybots"], state="*")
 async def my_bots(message: types.Message, state: FSMContext):
     """
-    Команда /mybots (список ботов)
+    命令 /mybots （机器人列表）
     """
     return await send_bots_menu(message.chat.id, message.from_user.id)
 
@@ -35,7 +35,7 @@ async def my_bots(message: types.Message, state: FSMContext):
 @dp.message_handler(commands=["addbot"], state="*")
 async def add_bot(message: types.Message, state: FSMContext):
     """
-    Команда /addbot (добавить бота)
+    命令 /addbot（添加机器人）
     """
     user = await User.get_or_none(telegram_id=message.from_user.id)
     max_bot_count = OlgramSettings.max_bots_per_user()
@@ -43,18 +43,17 @@ async def add_bot(message: types.Message, state: FSMContext):
         max_bot_count = OlgramSettings.max_bots_per_user_promo()
     bot_count = await Bot.filter(owner__telegram_id=message.from_user.id).count()
     if bot_count >= max_bot_count:
-        await message.answer(_("У вас уже слишком много ботов. Удалите какой-нибудь свой бот из Olgram"
-                               "(/mybots -> (Выбрать бота) -> Удалить бот)"))
+        await message.answer(_("当前设置为每人只能创建10个转发机器人"))
         return
 
     await message.answer(dedent(_("""
-    Чтобы подключить бот, вам нужно выполнить три действия:
+    添加新的转发机器人
 
-    1. Перейдите в бот @BotFather, нажмите START и отправьте команду /newbot
-    2. Введите название бота, а потом username бота.
-    3. После создания бота перешлите ответное сообщение в этот бот или скопируйте и пришлите token бота.
+    1. 转到机器人 @BotFather，按 /start 键后,发送 /newbot
+    2. 输入机器人的名字，然后输入机器人的用户名 @***bot
+    3. 创建机器人后，将机器人的API Token发给我
 
-    Важно: не подключайте боты, которые используются в других сервисах (Manybot, Chatfuel, Livegram и других).
+    重要：不要连接其他转发机器人（Manybot、Chatfuel、Livegram等）
     """)))
     await state.set_state("add_bot")
 
@@ -62,30 +61,28 @@ async def add_bot(message: types.Message, state: FSMContext):
 @dp.message_handler(state="add_bot", content_types="text", regexp="^[^/].+")  # Not command
 async def bot_added(message: types.Message, state: FSMContext):
     """
-    Пользователь добавляет бота и мы ждём от него токен
+    添加一个机器人，请提供一个 token
     """
     token = re.findall(token_pattern, message.text)
 
     async def on_invalid_token():
         await message.answer(dedent(_("""
-        Это не токен бота.
-
-        Токен выглядит вот так: 123456789:AAAA-abc123_AbcdEFghijKLMnopqrstu12
+        机器人token错误,格式不正确
         """)))
 
     async def on_dummy_token():
         await message.answer(dedent(_("""
-        Не удалось запустить этого бота: неверный токен
+        添加机器人失败：错误的令牌
         """)))
 
     async def on_unknown_error():
         await message.answer(dedent(_("""
-        Не удалось запустить этого бота: непредвиденная ошибка
+        机器人无法启动：意外错误
         """)))
 
     async def on_duplication_bot():
         await message.answer(dedent(_("""
-        Такой бот уже есть в базе данных
+        已存在的机器人
         """)))
 
     if not token:
@@ -119,5 +116,5 @@ async def bot_added(message: types.Message, state: FSMContext):
         await bot.delete()
         return await on_unknown_error()
 
-    await message.answer(_("Бот добавлен! Список ваших ботов: /mybots"))
+    await message.answer(_("添加成功! 机器人列表：/mybots "))
     await state.reset_state()
