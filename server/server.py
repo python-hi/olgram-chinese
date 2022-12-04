@@ -46,6 +46,7 @@ async def register_token(bot: Bot) -> bool:
     #      BotCommand("", _("隐私政策"))
     #  ])
     #   建议禁止上面的/start和/security_policy,直接删除命令就可以
+    #   若果有需要,去除上方的#号即可
 
     await a_bot.session.close()
     del a_bot
@@ -77,6 +78,6 @@ def main():
 
     runner = web.AppRunner(app)
     loop.run_until_complete(runner.setup())
-    logger.info("Server initialization done")
+    logger.info("服务器初始化完成")
     site = web.TCPSite(runner, port=ServerSettings.app_port(), ssl_context=context)
     return site
