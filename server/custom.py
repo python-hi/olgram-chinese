@@ -75,10 +75,10 @@ async def send_user_message(message: types.Message, super_chat_id: int, bot):
             user_info += " | @" + message.from_user.username
         user_info += f" | #ID{message.from_user.id}"
 
-        # Добавлять информацию в конец текста
-        if message.content_type == types.ContentType.TEXT and len(message.text) + len(user_info) < 4093:  # noqa:E721
+        # 在文本末尾添加信息
+        if message.content_type == types.ContentType.TEXT and len(message.text) + len(user_info) < 4093:  #我:E721
             new_message = await message.bot.send_message(super_chat_id, message.text + "\n\n" + user_info)
-        else:  # Не добавлять информацию в конец текста, информация отдельным сообщением
+        else:  # 不要在正文末尾添加信息，信息在单独的消息中
             new_message = await message.bot.send_message(super_chat_id, text=user_info)
             new_message_2 = await message.copy_to(super_chat_id, reply_to_message_id=new_message.message_id)
             await _redis.set(_message_unique_id(bot.pk, new_message_2.message_id), message.chat.id,
