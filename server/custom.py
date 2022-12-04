@@ -69,7 +69,7 @@ def _on_security_policy(message: types.Message, bot):
 async def send_user_message(message: types.Message, super_chat_id: int, bot):
     """转发来自用户的消息，必要时添加用户信息"""
     if bot.enable_additional_info:
-        user_info = _("用户信息 ")
+        user_info = _("")
         user_info += message.from_user.full_name
         if message.from_user.username:
             user_info += " | @" + message.from_user.username
